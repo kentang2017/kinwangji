@@ -77,6 +77,12 @@ def find_lunar_hour(day):
 def repeat_list(n, thelist):
     return [repetition for i in thelist for repetition in repeat(i,n)]
 
+def multi_key_dict_get(d, k):
+    for keys, v in d.items():
+        if k in keys:
+            return v
+    return None
+
 #分干支
 def minutes_jiazi_d():
 
@@ -93,6 +99,9 @@ def closest(lst, K):
 
 def closest1(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))+1]
+
+def closest2(lst, K):
+    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
 #旬
 def liujiashun_dict():
     return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10] ,jiazi()[0::10])))), jiazi()[0::10]))
@@ -138,6 +147,8 @@ def wanji_four_gua(year, month, day, hour, minute):
     mys1 = change(mys, yun_gua_yao)
     yungua = multi_key_dict_get(sixtyfourgua, mys1)
     shi_yao = shi // 2 % 6  
+    if shi_yao == 0:
+        shi_yao = 6
     shis1 = change(mys1, shi_yao)
     list(wangji_gua.values())
    
@@ -147,24 +158,17 @@ def wanji_four_gua(year, month, day, hour, minute):
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
     jiazi_years = [4 - 60 * i for i in range(52)]+[4 + 60 * i for i in range(52)]
-    if year < 0:
-        close_jiazi_year = closest1(jiazi_years, year)
     if year > 0:
         close_jiazi_year = closest(jiazi_years, year)
     if year in jiazi_years:
         close_jiazi_year = jiazi_years[jiazi_years.index(year)]
+    if year not in jiazi_years and year - close_jiazi_year > 60:
+        close_jiazi_year = closest2(jiazi_years, year)
     try:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
     except ValueError:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(year)
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua } 
-
-def multi_key_dict_get(d, k):
-    for keys, v in d.items():
-        if k in keys:
-            return v
-    return None
-
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
