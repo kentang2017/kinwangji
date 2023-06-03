@@ -50,15 +50,17 @@ with st.sidebar:
         d = now.day
         h = now.hour
         min = now.minute
+   start = st.button('起盤')
 
 with update:
     st.header('日誌')
     st.markdown(get_file_content_as_string("update.md"))
 
 with pan:
-    st.header('堅皇極')
-    st.text('皇極經世')
-    pan = display_pan(y,m,d,h,min)
-    output2 = st.empty()
-    with st_capture(output2.code):
-        print(pan)
+    if manual:
+        st.header('堅皇極')
+        st.text('皇極經世')
+        pan = display_pan(y,m,d,h,min)
+        output2 = st.empty()
+        with st_capture(output2.code):
+            print(pan)
