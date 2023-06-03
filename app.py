@@ -29,7 +29,7 @@ def kty(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
-st.set_page_config(layout="wide",page_title="堅皇極")
+st.set_page_config(layout="wide",page_title="堅皇極-皇極經世排盤")
 pan,update = st.tabs([' 排盤 ', ' 連結 '])
 with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997-8-8)', '')
