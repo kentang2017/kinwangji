@@ -18,7 +18,7 @@ base = os.path.abspath(os.path.dirname(__file__))
 path = os.path.join(base, 'data.pkl')
 data = pickle.load(open(path, "rb"))
 sixtyfourgua = bidict(data.get("數字排六十四卦"))
-
+gua_dist = data.get("易經卦爻詳解")
 wangji_gua = dict(zip(range(1,61),"復,頤,屯,益,震,噬嗑,隨,无妄,明夷,賁,既濟,家人,豐,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝".split(",")))
 #干支
 tian_gan = '甲乙丙丁戊己庚辛壬癸'
