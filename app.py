@@ -35,23 +35,7 @@ with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     start = st.button('起盤')
-    try:
-        p = str(idate).split("-")
-        pp = str(pp_time).split(":")
-        y = int(p[0])
-        m = int(p[1])
-        d = int(p[2])
-        h = int(pp[0])
-        min = int(pp[1])
-    except ValueError:
-        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-        ny = now.year
-        nm = now.month
-        nd = now.day
-        nh = now.hour
-        nmin = now.minute
-  
-
+ 
 with update:
     st.header('日誌')
     st.markdown(get_file_content_as_string("update.md"))
@@ -59,11 +43,27 @@ with update:
 with pan:
     st.header('堅皇極')
     st.text('暫時以明黃粵洲的皇極經世起盤公式起盤。')
-    if start:
-        pan = display_pan(y,m,d,h,min)
-    else:
-        pan = display_pan(ny,nm,nd,nh,nmin)
     output2 = st.empty()
     with st_capture(output2.code):
-        print(pan)
+        if start:
+            p = str(idate).split("-")
+            pp = str(pp_time).split(":")
+            y = int(p[0])
+            m = int(p[1])
+            d = int(p[2])
+            h = int(pp[0])
+            min = int(pp[1])
+            pan = display_pan(y,m,d,h,min)
+            print(pan)
+        else:
+            now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+            ny = now.year
+            nm = now.month
+            nd = now.day
+            nh = now.hour
+            nmin = now.minute
+            pan = display_pan(ny,nm,nd,nh,nmin)
+            print(pan)
+
+       
    
