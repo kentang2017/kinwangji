@@ -25,7 +25,7 @@ def get_file_content_as_string(path):
     return response.read().decode("utf-8")
   
 def kty(path):
-    url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
+    url = 'https://raw.githubusercontent.com/kentang2017/kinliuren/master/' + path
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
 
