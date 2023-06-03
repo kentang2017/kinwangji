@@ -31,9 +31,10 @@ def gethistory(path):
 st.set_page_config(layout="wide",page_title="堅皇極")
 pan,update = st.tabs([' 排盤 ', ' 日誌 '])
 with st.sidebar:
-    pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
+    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
+    #itime = st.text_input('輸入時間(如: 18:30)', '')
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    p = str(pp_date).split("-")
+    p = str(i_date).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
     m = int(p[1])
