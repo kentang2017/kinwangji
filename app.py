@@ -47,7 +47,7 @@ with update:
 
 with pan:
     st.header('堅皇極經世')
-    pan = wanji.display_pan(y,m,d,h,min)
+    pan = display_pan(y,m,d,h,min)
     output2 = st.empty()
     with st_capture(output2.code):
         print(pan)
