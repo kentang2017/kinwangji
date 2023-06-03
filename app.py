@@ -46,7 +46,8 @@ with update:
     st.markdown(get_file_content_as_string("update.md"))
 
 with pan:
-    st.header('堅皇極經世')
+    st.header('堅皇極')
+    st.text('皇極經世')
     pan = display_pan(y,m,d,h,min)
     output2 = st.empty()
     with st_capture(output2.code):
