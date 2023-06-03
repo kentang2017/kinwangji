@@ -1,6 +1,7 @@
 import os, urllib
 import streamlit as st
 import pendulum as pdlm
+import datetime
 from contextlib import contextmanager, redirect_stdout
 from sxtwl import fromSolar
 from io import StringIO
@@ -31,16 +32,24 @@ def gethistory(path):
 st.set_page_config(layout="wide",page_title="堅皇極")
 pan,update = st.tabs([' 排盤 ', ' 日誌 '])
 with st.sidebar:
-    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
-    #itime = st.text_input('輸入時間(如: 18:30)', '')
-    pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    p = str(idate).split("-")
-    pp = str(pp_time).split(":")
-    y = int(p[0])
-    m = int(p[1])
-    d = int(p[2])
-    h = int(pp[0])
-    min = int(pp[1])
+    try:
+        idate = st.text_input('輸入日期(如: 1997/8/8)', '')
+        #itime = st.text_input('輸入時間(如: 18:30)', '')
+        pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
+        p = str(idate).split("-")
+        pp = str(pp_time).split(":")
+        y = int(p[0])
+        m = int(p[1])
+        d = int(p[2])
+        h = int(pp[0])
+        min = int(pp[1])
+    except ValueError:
+        now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+        y = now.year
+        m = now.month
+        d = now.day
+        h = now.hour
+        min = now.minute
 
 with update:
     st.header('日誌')
