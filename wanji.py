@@ -23,7 +23,6 @@ wangji_gua = dict(zip(range(1,61),"復,頤,屯,益,震,噬嗑,隨,无妄,明夷,
 #干支
 tian_gan = '甲乙丙丁戊己庚辛壬癸'
 di_zhi = '子丑寅卯辰巳午未申酉戌亥'
-
 #換算干支
 def gangzhi(year, month, day, hour, minute):
     if year == 0:
@@ -130,132 +129,6 @@ def one2two(gua):
         return gua
 
 def wanji_four_gua(year, month, day, hour, minute):
-    ygz = gangzhi(year, month, day, hour, minute)[0]
-    if year < 0:
-        acum_year = 67017 + year + 1
-    else:
-        acum_year = 67017 + year #積年數
-    hui  = acum_year // 10800 +1 #會
-    yun = acum_year // 360 +1  #運
-    shi = acum_year // 30 + 1 #世
-    main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
-    mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
-    if yun % 6 == 0:
-        yun_gua_yao = 6
-    else:
-        yun_gua_yao = yun % 6
-    mys1 = change(mys, yun_gua_yao)
-    yungua = multi_key_dict_get(sixtyfourgua, mys1)
-    shi_yao = shi // 2 % 6  
-    if shi_yao == 0:
-        shi_yao = 6
-    shis1 = change(mys1, shi_yao)
-#換算干支
-def gangzhi(year, month, day, hour, minute):
-    if year == 0:
-        return ["無效"]
-    if year < 0:
-        year = year + 1 
-    if hour == 23:
-        d = Date(round((Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day+1).zfill(2), str(0).zfill(2)))), 3))
-    else:
-        d = Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
-    dd = list(d.tuple())
-    cdate = fromSolar(dd[0], dd[1], dd[2])
-    yTG,mTG,dTG,hTG = "{}{}".format(tian_gan[cdate.getYearGZ().tg], di_zhi[cdate.getYearGZ().dz]), "{}{}".format(tian_gan[cdate.getMonthGZ().tg],di_zhi[cdate.getMonthGZ().dz]), "{}{}".format(tian_gan[cdate.getDayGZ().tg], di_zhi[cdate.getDayGZ().dz]), "{}{}".format(tian_gan[cdate.getHourGZ(dd[3]).tg], di_zhi[cdate.getHourGZ(dd[3]).dz])
-    if year < 1900:
-        mTG1 = find_lunar_month(yTG).get(lunar_date_d(year, month, day).get("月"))
-    else:
-        mTG1 = mTG
-    hTG1 = find_lunar_hour(dTG).get(hTG[1])
-    gangzhi_minute = minutes_jiazi_d().get(str(hour)+":"+str(minute))
-    return [yTG, mTG1, dTG, hTG1, gangzhi_minute]
-#五虎遁，起正月
-def find_lunar_month(year):
-    fivetigers = {
-    tuple(list('甲己')):'丙寅',
-    tuple(list('乙庚')):'戊寅',
-    tuple(list('丙辛')):'庚寅',
-    tuple(list('丁壬')):'壬寅',
-    tuple(list('戊癸')):'甲寅'
-    }
-    if multi_key_dict_get(fivetigers, year[0]) == None:
-        result = multi_key_dict_get(fivetigers, year[1])
-    else:
-        result = multi_key_dict_get(fivetigers, year[0])
-    return dict(zip(range(1,13),new_list(jiazi(), result)[:12]))
-
-#五鼠遁，起子時
-def find_lunar_hour(day):
-    fiverats = {
-    tuple(list('甲己')):'甲子',
-    tuple(list('乙庚')):'丙子',
-    tuple(list('丙辛')):'戊子',
-    tuple(list('丁壬')):'庚子',
-    tuple(list('戊癸')):'壬子'
-    }
-    if multi_key_dict_get(fiverats, day[0]) == None:
-        result = multi_key_dict_get(fiverats, day[1])
-    else:
-        result = multi_key_dict_get(fiverats, day[0])
-    return dict(zip(list(di_zhi), new_list(jiazi(), result)[:12]))
-
-def repeat_list(n, thelist):
-    return [repetition for i in thelist for repetition in repeat(i,n)]
-
-def multi_key_dict_get(d, k):
-    for keys, v in d.items():
-        if k in keys:
-            return v
-    return None
-
-#分干支
-def minutes_jiazi_d():
-
-    t = [f"{h}:{m}" for h in range(24) for m in range(60)]
-    minutelist = dict(zip(t, cycle(repeat_list(2, jiazi()))))
-    return minutelist
-#農曆
-def lunar_date_d(year, month, day):
-    day = fromSolar(year, month, day)
-    return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
-
-def closest(lst, K):
-    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
-
-def closest1(lst, K):
-    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))+1]
-
-def closest2(lst, K):
-    return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
-#旬
-def liujiashun_dict():
-    return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10] ,jiazi()[0::10])))), jiazi()[0::10]))
-
-def jiazi():
-    Gan, Zhi = '甲乙丙丁戊己庚辛壬癸', '子丑寅卯辰巳午未申酉戌亥'
-    return list(map(lambda x: "{}{}".format(Gan[x % len(Gan)], Zhi[x % len(Zhi)]), list(range(60))))
-
-def new_list(olist, o):
-    a = olist.index(o)
-    res1 = olist[a:] + olist[:a]
-    return res1
-
-def change(g, yao):
-    y = {6: 5, 5: 4, 4: 3, 3: 2, 2: 1, 1: 0}.get(yao)
-    if g[y] == "7":
-        a = "8"
-    if g[y] == "8":
-        a = "7"
-    return "".join([a if i == y else g[i] for i in range(len(g))])
-
-def one2two(gua):
-    if len(gua) == 1:
-        return gua + "　"
-    else:
-        return gua
-
-def wanji_four_gua(year, month, day, hour, minute):
     if year == 0:
         year = 1
     ygz = gangzhi(year, month, day, hour, minute)[0]
@@ -287,10 +160,12 @@ def wanji_four_gua(year, month, day, hour, minute):
     shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(), ygz))
     shungua1 = change(shis1,shun_yao)
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
-    jiazi_years = sorted([-56 - 60 * i for i in range(50)]+[4 + 60 * i for i in range(50)])
+    jiazi_years = sorted([-56 - 60 * i for i in range(100)]+[4 + 60 * i for i in range(100)])
     if year < 0:
         close_jiazi_year = closest1(jiazi_years, year)
     if year > 64:
+        close_jiazi_year = closest(jiazi_years, year)
+    if year - close_jiazi_year > 60:
         close_jiazi_year = closest(jiazi_years, year)
     if year < 64:
         close_jiazi_year = closest2(jiazi_years, year)
@@ -303,7 +178,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     except ValueError:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(year)
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua } 
-    
+
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
