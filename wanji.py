@@ -189,7 +189,7 @@ def display_pan(year, month, day, hour, minute):
 
     yrg_code = [guayaodict.get(i) for i in sixtyfourgua.inverse[yrg][0].replace("6","8").replace("9","7")]
     g1 = "   正卦            運卦            世卦             旬卦            年卦\n"
-    gg = " 【{}】         【{}】        【{}】         【{}】        【{}】\n".format(mg1, yg1, sg1, shg1, yrg1)
+    gg = " 【{}】         【{}】         【{}】         【{}】        【{}】\n".format(mg1, yg1, sg1, shg1, yrg1)
     g2 = " {}         {}         {}         {}         {}\n".format(mg_code[5], yg_code[5], sg_code[5], shg_code[5], yrg_code[5])
     g3 = " {}         {}         {}         {}         {}\n".format(mg_code[4], yg_code[4], sg_code[4], shg_code[4], yrg_code[4])
     g4 = " {}         {}         {}         {}         {}\n".format(mg_code[3], yg_code[3], sg_code[3], shg_code[3], yrg_code[3])
