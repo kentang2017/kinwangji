@@ -58,10 +58,13 @@ with update:
     st.markdown(get_file_content_as_string("update.md"))
 
 with pan:
+    st.header('堅皇極')
+    st.text('皇極經世')
     if start:
-        st.header('堅皇極')
-        st.text('皇極經世')
         pan = display_pan(y,m,d,h,min)
-        output2 = st.empty()
-        with st_capture(output2.code):
-            print(pan)
+    else:
+        pan = display_pan(y,m,d,h,min)
+    output2 = st.empty()
+    with st_capture(output2.code):
+        print(pan)
+   
