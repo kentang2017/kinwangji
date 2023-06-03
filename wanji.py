@@ -162,12 +162,12 @@ def wanji_four_gua(year, month, day, hour, minute):
     shun_gua = multi_key_dict_get(sixtyfourgua, shungua1)
     jiazi_years = sorted([-56 - 60 * i for i in range(100)]+[4 + 60 * i for i in range(100)])
     if year < 0:
-        close_jiazi_year = closest1(jiazi_years, year)
+        close_jiazi_year = closest(jiazi_years, year)
     if year > 64:
         close_jiazi_year = closest(jiazi_years, year)
     if year - close_jiazi_year > 60:
         close_jiazi_year = closest(jiazi_years, year)
-    if year < 64:
+    if year < 64 and year > 0 :
         close_jiazi_year = closest2(jiazi_years, year)
     if year in jiazi_years:
         close_jiazi_year = jiazi_years[jiazi_years.index(year)]
