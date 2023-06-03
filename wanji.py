@@ -139,6 +139,8 @@ def wanji_four_gua(year, month, day, hour, minute):
     yungua = multi_key_dict_get(sixtyfourgua, mys1)
     shi_yao = shi // 2 % 6  
     shis1 = change(mys1, shi_yao)
+    list(wangji_gua.values())
+   
     shigua = multi_key_dict_get(sixtyfourgua, change(mys1, shi_yao))
     shi_shun = dict(zip("甲子,甲戌,甲申,甲午,甲辰,甲寅".split(","),range(1,7)))
     shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(), ygz))
@@ -147,9 +149,14 @@ def wanji_four_gua(year, month, day, hour, minute):
     jiazi_years = [4 - 60 * i for i in range(52)]+[4 + 60 * i for i in range(52)]
     if year < 0:
         close_jiazi_year = closest1(jiazi_years, year)
-    else:
+    if year > 0:
         close_jiazi_year = closest(jiazi_years, year)
-    yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
+    if year in jiazi_years:
+        close_jiazi_year = jiazi_years[jiazi_years.index(year)]
+    try:
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
+    except ValueError:
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(year)
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua } 
 
 def multi_key_dict_get(d, k):
