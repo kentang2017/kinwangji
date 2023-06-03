@@ -24,7 +24,7 @@ def get_file_content_as_string(path):
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
   
-def gethistory(path):
+def kty(path):
     url = 'https://raw.githubusercontent.com/kentang2017/kintaiyi/master/' + path
     response = urllib.request.urlopen(url)
     return response.read().decode("utf-8")
@@ -38,7 +38,7 @@ with st.sidebar:
  
 with update:
     st.header('日誌')
-    st.markdown(get_file_content_as_string("update.md"))
+    st.markdown(kty("update.md"))
 
 with pan:
     st.header('堅皇極')
