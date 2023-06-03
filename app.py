@@ -34,7 +34,7 @@ with st.sidebar:
     idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     #itime = st.text_input('輸入時間(如: 18:30)', '')
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
-    p = str(i_date).split("-")
+    p = str(idate).split("-")
     pp = str(pp_time).split(":")
     y = int(p[0])
     m = int(p[1])
