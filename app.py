@@ -29,7 +29,7 @@ def gethistory(path):
     return response.read().decode("utf-8")
 
 st.set_page_config(layout="wide",page_title="堅皇極經世")
-pan,update,booktext,oexample = st.tabs([' 排盤 ', ' 日誌 '])
+pan,update = st.tabs([' 排盤 ', ' 日誌 '])
 with st.sidebar:
     pp_date=st.date_input("日期",pdlm.now(tz='Asia/Shanghai').date())
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
