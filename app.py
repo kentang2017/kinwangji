@@ -43,6 +43,7 @@ with st.sidebar:
         d = int(p[2])
         h = int(pp[0])
         min = int(pp[1])
+        start = st.button('起盤')
     except ValueError:
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
         y = now.year
@@ -50,7 +51,7 @@ with st.sidebar:
         d = now.day
         h = now.hour
         min = now.minute
-   start = st.button('起盤')
+  
 
 with update:
     st.header('日誌')
