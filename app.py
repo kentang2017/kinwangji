@@ -59,7 +59,7 @@ with update:
 
 with pan:
     st.header('堅皇極')
-    st.text('皇極經世')
+    st.text('暫時以明黃粵洲的皇極經世起盤公式起盤。')
     if start:
         pan = display_pan(y,m,d,h,min)
     else:
