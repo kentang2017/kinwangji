@@ -46,11 +46,11 @@ with st.sidebar:
         min = int(pp[1])
     except ValueError:
         now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
-        y = now.year
-        m = now.month
-        d = now.day
-        h = now.hour
-        min = now.minute
+        ny = now.year
+        nm = now.month
+        nd = now.day
+        nh = now.hour
+        nmin = now.minute
   
 
 with update:
@@ -63,7 +63,7 @@ with pan:
     if start:
         pan = display_pan(y,m,d,h,min)
     else:
-        pan = display_pan(y,m,d,h,min)
+        pan = display_pan(ny,nm,nd,nh,nmin)
     output2 = st.empty()
     with st_capture(output2.code):
         print(pan)
