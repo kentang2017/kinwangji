@@ -32,7 +32,7 @@ def kty(path):
 st.set_page_config(layout="wide",page_title="堅皇極-皇極經世排盤")
 pan,update = st.tabs([' 排盤 ', ' 連結 '])
 with st.sidebar:
-    idate = st.text_input('輸入日期(如: 1997-8-8)', '')
+    idate = st.text_input('輸入日期(如: 1997/8/8)', '')
     pp_time=st.time_input("時間",pdlm.now(tz='Asia/Shanghai').time())
     start = st.button('起盤')
  
@@ -46,7 +46,7 @@ with pan:
     output2 = st.empty()
     with st_capture(output2.code):
         if start:
-            p = str(idate).split("-")
+            p = str(idate).split("/")
             pp = str(pp_time).split(":")
             y = int(p[0])
             m = int(p[1])
