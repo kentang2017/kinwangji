@@ -45,17 +45,27 @@ with pan:
     st.text('暫時以明黃粵洲的皇極經世起盤公式起盤。')
     output2 = st.empty()
     with st_capture(output2.code):
-        if start:
-            p = str(idate).split("/")
-            pp = str(pp_time).split(":")
-            y = int(p[0])
-            m = int(p[1])
-            d = int(p[2])
-            h = int(pp[0])
-            min = int(pp[1])
-            pan = display_pan(y,m,d,h,min)
-            print(pan)
-        else:
+        try:
+            if start:
+                p = str(idate).split("/")
+                pp = str(pp_time).split(":")
+                y = int(p[0])
+                m = int(p[1])
+                d = int(p[2])
+                h = int(pp[0])
+                min = int(pp[1])
+                pan = display_pan(y,m,d,h,min)
+                print(pan)
+            else:
+                now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
+                ny = now.year
+                nm = now.month
+                nd = now.day
+                nh = now.hour
+                nmin = now.minute
+                pan = display_pan(ny,nm,nd,nh,nmin)
+                print(pan)
+        except ValueError:
             now = datetime.datetime.now(pytz.timezone('Asia/Hong_Kong'))
             ny = now.year
             nm = now.month
@@ -64,6 +74,5 @@ with pan:
             nmin = now.minute
             pan = display_pan(ny,nm,nd,nh,nmin)
             print(pan)
-
-       
    
+
