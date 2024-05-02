@@ -176,9 +176,9 @@ def wanji_four_gua(year, month, day, hour, minute):
     if year not in jiazi_years and year - close_jiazi_year > 60:
         close_jiazi_year = closest2(jiazi_years, year)
     try:
-        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua2.values()), shigua))).get(year)
     except ValueError:
-        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(year)
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua2.values())).get(year)
     ygua = sixtyfourgua.inverse[yeargua][0]
     nygua = "".join([{"9":"7", "6":"8","7":"7", "8":"8"}.get(i) for i in ygua])
     firstmonthgua1 = {"7":"8", "8":"7"}.get(nygua[0]) + nygua[1:]
