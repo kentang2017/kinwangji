@@ -19,8 +19,8 @@ path = os.path.join(base, 'data.pkl')
 data = pickle.load(open(path, "rb"))
 sixtyfourgua = bidict(data.get("數字排六十四卦"))
 gua_dist = data.get("易經卦爻詳解")
-wangji_gua2 = dict(zip(range(1,61),"復,頤,屯,益,震,噬嗑,隨,無妄,明夷,賁,既濟,家人,豐,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝".split(",")))
-wangji_gua = dict(zip(range(1,65),"復,頤,屯,益,震,噬嗑,隨,無妄,明夷,賁,既濟,家人,豐,離,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,乾,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,坎,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝,坤".split(",")))
+wangji_gua = dict(zip(range(1,61),"復,頤,屯,益,震,噬嗑,隨,無妄,明夷,賁,既濟,家人,豐,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝".split(",")))
+wangji_gua2 = dict(zip(range(1,65),"復,頤,屯,益,震,噬嗑,隨,無妄,明夷,賁,既濟,家人,豐,離,革,同人,臨,損,節,中孚,歸妹,睽,兌,履,泰,大畜,需,小畜,大壯,大有,夬,乾,姤,大過,鼎,恆,巽,井,蠱,升,訟,困,未濟,解,渙,坎,蒙,師,遯,咸,旅,小過,漸,蹇,艮,謙,否,萃,晉,豫,觀,比,剝,坤".split(",")))
 #干支
 tian_gan = '甲乙丙丁戊己庚辛壬癸'
 di_zhi = '子丑寅卯辰巳午未申酉戌亥'
@@ -143,7 +143,7 @@ def wanji_four_gua(year, month, day, hour, minute):
         shi = acum_year // 30 + 2#世
     else:
         shi = acum_year // 30 + 1
-    main_gua = wangji_gua2.get(int(round((acum_year / 2160), 0)))#
+    main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
     mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
     if yun % 6 == 0:
         yun_gua_yao = 6
@@ -155,7 +155,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     if shi_yao == 0:
         shi_yao = 6
     shis1 = change(mys1, shi_yao)
-    list(wangji_gua2.values())
+    list(wangji_gua.values())
     lmonth = lunar_date_d(year, month, day).get("月")
     shigua = multi_key_dict_get(sixtyfourgua, change(mys1, shi_yao))
     shi_shun = dict(zip("甲子,甲戌,甲申,甲午,甲辰,甲寅".split(","),range(1,7)))
