@@ -246,12 +246,12 @@ def wanji_four_gua(year, month, day, hour, minute):
     #day_gua = multi_key_dict_get(gualist, datetime.date(year, month, day))
     j_q = jq(year, month, day, hour, minute)
     day_gua = multi_key_dict_get( {
-    ("立春","雨水", "驚蟄","春分"): daygua_list[0],
-    ("清明", "穀雨", "立夏","小滿",): daygua_list[1],
-    ("芒種","夏至", "小暑", "大暑"): daygua_list[2],
-    ("立秋","處暑", "白露", "秋分"): daygua_list[3],
-    ( "寒露","霜降","立冬","小雪"): daygua_list[4],
-    ("大雪","冬至", "小寒", "大寒"): daygua_list[5]
+    ("雨水", "驚蟄","春分","清明"): daygua_list[0],
+    ("穀雨", "立夏","小滿","芒種"): daygua_list[1],
+    ("夏至", "小暑", "大暑","立秋"): daygua_list[2],
+    ("處暑", "白露", "秋分","寒露"): daygua_list[3],
+    ("霜降","立冬","小雪","大雪"): daygua_list[4],
+    ("冬至", "小寒", "大寒","立春",): daygua_list[5]
     }, j_q)
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}
 
@@ -305,5 +305,5 @@ def display_pan(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    print( wanji_four_gua(2024,10,5,14,54))
+    print( wanji_four_gua(2024,6,20,14,54))
     #print(wanji_four_gua(2024,4,29,10,0))
