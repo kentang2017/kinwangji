@@ -226,25 +226,25 @@ def wanji_four_gua(year, month, day, hour, minute):
     final = generate_month_lists(year)[5][-1]
     fd1 = find_jq_date1(fd.year, fd.month, fd.day, fd.hour, fd.minute)
     middle_qi = [fd1.get(i) for i in "雨水,春分,穀雨,小滿,夏至,大暑,處暑,秋分,霜降,小雪,冬至,大寒".split(",")][0::2] + [final.strftime('%Y/%m/%d 0:00:00')] 
-    
-    
+
     mgua = mgua_list.get(lmonth)
     new_gua_list = [change(lmonth_yaos, 1), change(lmonth_yaos, 2), change(lmonth_yaos, 3), change(lmonth_yaos, 4), change(lmonth_yaos, 5), change(lmonth_yaos, 6)]
     yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
     daygua_list = [multi_key_dict_get(sixtyfourgua, i) for i in new_gua_list]
     #gualist = dict(zip(daygua_list,yearlist))
     ml = get_datelist(middle_qi)
-    gualist = {daygua_list[0] : ml[0],
-            daygua_list[1] : ml[1],
-            daygua_list[2] : ml[2],
-            daygua_list[3] : ml[3],
-            daygua_list[4] : ml[4],
-            daygua_list[5] : ml[5]}
-                #for i in 
-
-
-
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua},  gualist
+    ml = [
+    [dt.date() if isinstance(dt, datetime.datetime) else dt for dt in sublist]
+    for sublist in ml
+    ]
+    gualist = {tuple(ml[0]): daygua_list[0],
+           tuple(ml[1]): daygua_list[1],
+           tuple(ml[2]): daygua_list[2],
+           tuple(ml[3]): daygua_list[3],
+           tuple(ml[4]): daygua_list[4],
+           tuple(ml[5]): daygua_list[5]}
+    day_gua = multi_key_dict_get(gualist, datetime.date(year, month, day))
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua }
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
