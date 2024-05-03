@@ -261,7 +261,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     ("霜降","立冬","小雪","大雪"): daygua_list[4],
     ("冬至", "小寒", "大寒","立春",): daygua_list[5]
     }, j_q)
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}, spring 
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
