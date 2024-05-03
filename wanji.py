@@ -8,6 +8,7 @@ from ephem import Date
 import sxtwl
 from sxtwl import fromSolar, fromLunar
 from bidict import bidict
+from datetime import datetime, timedelta
 import datetime
 from itertools import cycle, repeat
 import cn2an
@@ -146,6 +147,19 @@ def generate_month_lists(year):
         month_lists.append(date_list)
     return month_lists
     
+def get_datelist(datelist):
+    result = []
+    for i in range(len(datelist) - 1):
+        start_date = datetime.datetime.strptime(datelist[i], '%Y/%m/%d %H:%M:%S')
+        end_date = datetime.datetime.strptime(datelist[i + 1], '%Y/%m/%d %H:%M:%S')
+        dates_between = []
+        current_date = start_date
+        while current_date < end_date:
+            dates_between.append(current_date)
+            current_date += timedelta(days=1)
+        result.append(dates_between)
+    return result
+
 def wanji_four_gua(year, month, day, hour, minute):
     if year == 0:
         year = 1
@@ -208,27 +222,36 @@ def wanji_four_gua(year, month, day, hour, minute):
     mlist = [firstmonthgua1,firstmonthgua1, secondmonthgua1,secondmonthgua1, thirdmonthgua1,thirdmonthgua1, forthmonthgua1,forthmonthgua1, fifthmonthgua1, fifthmonthgua1, sixthmonthgua1, sixthmonthgua1]
     mgua_list =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist]))
     lmonth_yaos = dict(zip(range(1, 13),mlist)).get(lmonth)
+    fd = generate_month_lists(year)[0][0]
+    final = generate_month_lists(year)[5][-1]
+    fd1 = find_jq_date1(fd.year, fd.month, fd.day, fd.hour, fd.minute)
+    middle_qi = [fd1.get(i) for i in "雨水,春分,穀雨,小滿,夏至,大暑,處暑,秋分,霜降,小雪,冬至,大寒".split(",")][0::2] + [final.strftime('%Y/%m/%d 0:00:00')] 
+    
+    
     mgua = mgua_list.get(lmonth)
     new_gua_list = [change(lmonth_yaos, 1), change(lmonth_yaos, 2), change(lmonth_yaos, 3), change(lmonth_yaos, 4), change(lmonth_yaos, 5), change(lmonth_yaos, 6)]
     yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
-    daygua_list = sum([[multi_key_dict_get(sixtyfourgua, i)] * 10 for i in new_gua_list], [])
-    gualist = dict(zip(daygua_list,yearlist))
-    closest_gua = None
-    current = datetime.datetime(year, month, day, hour, minute)
-    closest_diff = datetime.timedelta.max  # Initialize as the maximum timedelta value
-    for gua, date in gualist.items():
-        diff = abs(current - date)
-        if diff < closest_diff:
-            closest_diff = diff
-            day_gua = gua
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}
+    daygua_list = [multi_key_dict_get(sixtyfourgua, i) for i in new_gua_list]
+    #gualist = dict(zip(daygua_list,yearlist))
+    ml = get_datelist(middle_qi)
+    gualist = {daygua_list[0] : ml[0],
+            daygua_list[1] : ml[1],
+            daygua_list[2] : ml[2],
+            daygua_list[3] : ml[3],
+            daygua_list[4] : ml[4],
+            daygua_list[5] : ml[5]}
+                #for i in 
+
+
+
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua},  gualist
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
     b = "農曆︰{}{}月{}日\n".format(cn2an.transform(str(year)+"年", "an2cn"), an2cn(lunar_date_d(year, month, day).get("月")), an2cn(lunar_date_d(year,month, day).get("日")))
     c = "干支︰{}年  {}月  {}日  {}時\n".format(gz[0], gz[1], gz[2], gz[3])
-    j_q = jq(year, month, day, hour)
+    j_q = jq(year, month, day, hour, minute)
     c0 = "節氣︰{} | 旺︰{} | 相︰{}\n".format(j_q, gong_wangzhuai(j_q)[1].get("旺"), gong_wangzhuai(j_q)[1].get("相"))
     guayaodict = {"6":"▅▅ ▅▅ X", "7":"▅▅▅▅▅  ", "8":"▅▅ ▅▅  ", "9":"▅▅▅▅▅ O"}
     wj = wanji_four_gua(year, month, day, hour, minute)
@@ -273,5 +296,5 @@ def display_pan(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    print( display_pan(2023,8,8,10,0))
+    print( wanji_four_gua(2024,5,3,14,54))
     #print(wanji_four_gua(2024,4,29,10,0))
