@@ -95,7 +95,11 @@ def minutes_jiazi_d():
 #農曆
 def lunar_date_d(year, month, day):
     day = fromSolar(year, month, day)
-    return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
+    if year == day.getLunarYear() and day.getLunarMonth() == 12 and month<3:
+        cyear = day.getLunarYear()-1
+    else:
+        cyear =  day.getLunarYear()
+    return {"年":cyear,  "月": day.getLunarMonth(), "日":day.getLunarDay()}
 
 def closest(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
