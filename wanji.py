@@ -281,7 +281,10 @@ def wanji_four_gua(year, month, day, hour, minute):
     dgua_list = [dgua,  change(dgua, 1), change(dgua, 2), change(dgua, 3), change(dgua, 4), change(dgua, 5)]
     hgua_list1 = [multi_key_dict_get(sixtyfourgua, i)  for i in dgua_list]
     hgua_list = sum([[i] * 30 for i in hgua_list1], [])
-    rename_hour = {22:21,20:19,18:17,16:15,14:13,12:11,10:9,8:7,6:5,4:3,2:1,0:23}.get(hour)
+    if hour / 2 == 0:
+        rename_hour = {22:21,20:19,18:17,16:15,14:13,12:11,10:9,8:7,6:5,4:3,2:1,0:23}.get(hour)
+    else:
+        rename_hour = hour
     if rename_hour == 23:
         day = day - 1
     hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0), 360), hgua_list)).get(datetime.datetime(year, month, day, rename_hour, 0))
@@ -340,4 +343,4 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2024,5,4,0,58))
+    print( wanji_four_gua(2024,5,4,1,16))
