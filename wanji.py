@@ -5,8 +5,9 @@ Created on Fri Jun  2 12:44:35 2023
 @author: kentang
 """
 from ephem import Date
-from sxtwl import fromSolar
+from sxtwl import fromSolar, fromLunar
 from bidict import bidict
+import datetime
 from itertools import cycle, repeat
 import cn2an
 from cn2an import an2cn
@@ -128,6 +129,21 @@ def one2two(gua):
         return gua + "　"
     else:
         return gua
+
+def generate_month_lists(year):
+    month_lists = []
+    for i in range(1, 13, 2):
+        start = sxtwl.fromLunar(year, i, 1, True)
+        end = sxtwl.fromLunar(year, min(i+1, 12), 31, True)
+        start_date = datetime.datetime(start.getSolarYear(), start.getSolarMonth(), start.getSolarDay())
+        end_date = datetime.datetime(end.getSolarYear(), end.getSolarMonth(), end.getSolarDay())
+        date_list = []
+        current_date = start_date
+        while current_date <= end_date:
+            date_list.append(current_date)
+            current_date += datetime.timedelta(days=1)
+        month_lists.append(date_list)
+    return month_lists
 
 def wanji_four_gua(year, month, day, hour, minute):
     if year == 0:
