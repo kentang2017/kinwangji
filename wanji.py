@@ -208,6 +208,7 @@ def wanji_four_gua(year, month, day, hour, minute):
         close_jiazi_year = jiazi_years[jiazi_years.index(year)]
     if year not in jiazi_years and year - close_jiazi_year > 60:
         close_jiazi_year = closest2(jiazi_years, year)
+    yeargua = None
     try:
         if datetime.datetime(year, month, day) < datetime.datetime(year, 2, 4) and jq(year, month, day, hour, minute) != "立春":
             yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear-1)
