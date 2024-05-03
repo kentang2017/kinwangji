@@ -161,7 +161,7 @@ def get_datelist(datelist):
     return result
 
 def wanji_four_gua(year, month, day, hour, minute):
-    year = lunar_date_d(year, month, day).get("年")
+    cyear = lunar_date_d(year, month, day).get("年")
     if year == 0:
         year = 1
     ygz = gangzhi(year, month, day, hour, minute)[0]
@@ -209,9 +209,12 @@ def wanji_four_gua(year, month, day, hour, minute):
     if year not in jiazi_years and year - close_jiazi_year > 60:
         close_jiazi_year = closest2(jiazi_years, year)
     try:
-        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(year)
+        if datetime.datetime(year, month, day) < datetime.datetime(year, 2, 4) and jq(year, month, day, hour, minute) != "立春":
+            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear-1)
+        if datetime.datetime(year, month, day) < datetime.datetime(year, 2, 4) and jq(year, month, day, hour, minute) == "立春":
+            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
     except ValueError:
-        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(year)
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(cyear)
     ygua = sixtyfourgua.inverse[yeargua][0]
     nygua = "".join([{"9":"7", "6":"8","7":"7", "8":"8"}.get(i) for i in ygua])
     firstmonthgua1 = {"7":"8", "8":"7"}.get(nygua[0]) + nygua[1:]
