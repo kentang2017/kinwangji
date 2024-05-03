@@ -5,6 +5,7 @@ Created on Fri Jun  2 12:44:35 2023
 @author: kentang
 """
 from ephem import Date
+import sxtwl
 from sxtwl import fromSolar, fromLunar
 from bidict import bidict
 import datetime
