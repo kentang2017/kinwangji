@@ -176,7 +176,6 @@ def wanji_four_gua(year, month, day, hour, minute):
     else:
         shi = acum_year // 30 + 1
     main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
-    
     mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
     if yun % 6 == 0:
         yun_gua_yao = 6
@@ -210,10 +209,7 @@ def wanji_four_gua(year, month, day, hour, minute):
         close_jiazi_year = closest2(jiazi_years, year)
     yeargua = None
     try:
-        if datetime.datetime(year, month, day) < datetime.datetime(year, 2, 4) and jq(year, month, day, hour, minute) != "立春":
-            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear-1)
-        if datetime.datetime(year, month, day) < datetime.datetime(year, 2, 4) and jq(year, month, day, hour, minute) == "立春":
-            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
+        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
     except ValueError:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(cyear)
     ygua = sixtyfourgua.inverse[yeargua][0]
