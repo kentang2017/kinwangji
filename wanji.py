@@ -214,10 +214,8 @@ def wanji_four_gua(year, month, day, hour, minute):
         close_jiazi_year = closest2(jiazi_years, year)
     yeargua = None
     try:
-        if datetime.datetime(year, month, day, hour, minute) < spring:
-            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear-1)
-        else:
-            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
+        yeargua = dict(zip(jiazi(), new_list(list(wangji_gua.values()), shigua))).get(ygz)
+
     except ValueError:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(cyear)
     ygua = sixtyfourgua.inverse[yeargua][0]
@@ -314,4 +312,4 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2025,1,29,10,0))
+    print( wanji_four_gua(2025,1,1,10,0))
