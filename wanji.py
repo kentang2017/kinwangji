@@ -95,11 +95,7 @@ def minutes_jiazi_d():
 #農曆
 def lunar_date_d(year, month, day):
     day = fromSolar(year, month, day)
-    if year == day.getLunarYear() and day.getLunarMonth() == 12 and month<3:
-        cyear = day.getLunarYear()-1
-    else:
-        cyear =  day.getLunarYear()
-    return {"年":cyear,  "月": day.getLunarMonth(), "日":day.getLunarDay()}
+    return {"年":day.getLunarYear(),  "月": day.getLunarMonth(), "日":day.getLunarDay()}
 
 def closest(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))-1]
@@ -262,7 +258,7 @@ def wanji_four_gua(year, month, day, hour, minute):
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
-    b = "農曆︰{}{}月{}日\n".format(cn2an.transform(str(year)+"年", "an2cn"), an2cn(lunar_date_d(year, month, day).get("月")), an2cn(lunar_date_d(year,month, day).get("日")))
+    b = "農曆︰{}{}月{}日\n".format(cn2an.transform(str(lunar_date_d(year, month, day).get("年"))+"年", "an2cn"), an2cn(lunar_date_d(year, month, day).get("月")), an2cn(lunar_date_d(year,month, day).get("日")))
     c = "干支︰{}年  {}月  {}日  {}時\n".format(gz[0], gz[1], gz[2], gz[3])
     j_q = jq(year, month, day, hour, minute)
     c0 = "節氣︰{} | 旺︰{} | 相︰{}\n".format(j_q, gong_wangzhuai(j_q)[1].get("旺"), gong_wangzhuai(j_q)[1].get("相"))
