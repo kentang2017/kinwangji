@@ -144,7 +144,7 @@ def generate_month_lists(year):
             current_date += datetime.timedelta(days=1)
         month_lists.append(date_list)
     return month_lists
-
+    
 def wanji_four_gua(year, month, day, hour, minute):
     if year == 0:
         year = 1
@@ -160,6 +160,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     else:
         shi = acum_year // 30 + 1
     main_gua = wangji_gua.get(int(round((acum_year / 2160), 0)))#
+    
     mys = list(sixtyfourgua.inverse[main_gua][0].replace("6","8").replace("9","7"))
     if yun % 6 == 0:
         yun_gua_yao = 6
@@ -204,8 +205,22 @@ def wanji_four_gua(year, month, day, hour, minute):
     fifthmonthgua1 =   forthmonthgua1[0] + forthmonthgua1[1] + forthmonthgua1[2] + {"7":"8", "8":"7"}.get(forthmonthgua1[3]) + {"7":"8", "8":"7"}.get(forthmonthgua1[4]) + forthmonthgua1[5]        
     sixthmonthgua1 =   fifthmonthgua1[0] + fifthmonthgua1[1] + fifthmonthgua1[2] + fifthmonthgua1[3] + {"7":"8", "8":"7"}.get(fifthmonthgua1[4]) +  {"7":"8", "8":"7"}.get(fifthmonthgua1[5])                 
     mlist = [firstmonthgua1,firstmonthgua1, secondmonthgua1,secondmonthgua1, thirdmonthgua1,thirdmonthgua1, forthmonthgua1,forthmonthgua1, fifthmonthgua1, fifthmonthgua1, sixthmonthgua1, sixthmonthgua1]
-    mgua =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist])).get(lmonth)
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua} 
+    mgua_list =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist]))
+    lmonth_yaos = dict(zip(range(1, 13),mlist)).get(lmonth)
+    mgua = mgua_list.get(lmonth)
+    new_gua_list = [change(lmonth_yaos, 1), change(lmonth_yaos, 2), change(lmonth_yaos, 3), change(lmonth_yaos, 4), change(lmonth_yaos, 5), change(lmonth_yaos, 6)]
+    yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
+    daygua_list = sum([[multi_key_dict_get(sixtyfourgua, i)] * 10 for i in new_gua_list], [])
+    gualist = dict(zip(daygua_list,yearlist))
+    closest_gua = None
+    current = datetime.datetime(year, month, day, hour, minute)
+    closest_diff = datetime.timedelta.max  # Initialize as the maximum timedelta value
+    for gua, date in gualist.items():
+        diff = abs(current - date)
+        if diff < closest_diff:
+            closest_diff = diff
+            day_gua = gua
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
