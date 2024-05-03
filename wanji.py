@@ -161,6 +161,12 @@ def get_datelist(datelist):
     return result
 
 def wanji_four_gua(year, month, day, hour, minute):
+    j_q = jq(year, month, day, hour, minute)
+    lmonth = lunar_date_d(year, month, day).get("月")
+    yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
+    fd = generate_month_lists(year)[0][0]
+    fd1 = find_jq_date1(fd.year, fd.month, fd.day, fd.hour, fd.minute)
+    spring = datetime.datetime.strptime( fd1.get("立春"), '%Y/%m/%d %H:%M:%S')
     cyear = lunar_date_d(year, month, day).get("年")
     if year == 0:
         year = 1
@@ -188,7 +194,6 @@ def wanji_four_gua(year, month, day, hour, minute):
         shi_yao = 6
     shis1 = change(mys1, shi_yao)
     list(wangji_gua.values())
-    lmonth = lunar_date_d(year, month, day).get("月")
     shigua = multi_key_dict_get(sixtyfourgua, change(mys1, shi_yao))
     shi_shun = dict(zip("甲子,甲戌,甲申,甲午,甲辰,甲寅".split(","),range(1,7)))
     shun_yao = shi_shun.get(multi_key_dict_get(liujiashun_dict(), ygz))
@@ -209,7 +214,10 @@ def wanji_four_gua(year, month, day, hour, minute):
         close_jiazi_year = closest2(jiazi_years, year)
     yeargua = None
     try:
-        yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
+        if datetime.datetime(year, month, day, hour, minute) < spring:
+            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear-1)
+        else:
+            yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), new_list(list(wangji_gua.values()), shigua))).get(cyear)
     except ValueError:
         yeargua = dict(zip(list(range(close_jiazi_year, close_jiazi_year+60)), wangji_gua.values())).get(cyear)
     ygua = sixtyfourgua.inverse[yeargua][0]
@@ -223,14 +231,13 @@ def wanji_four_gua(year, month, day, hour, minute):
     mlist = [firstmonthgua1,firstmonthgua1, secondmonthgua1,secondmonthgua1, thirdmonthgua1,thirdmonthgua1, forthmonthgua1,forthmonthgua1, fifthmonthgua1, fifthmonthgua1, sixthmonthgua1, sixthmonthgua1]
     mgua_list =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist]))
     lmonth_yaos = dict(zip(range(1, 13),mlist)).get(1)
-    fd = generate_month_lists(year)[0][0]
     final = generate_month_lists(year)[5][-1]
-    fd1 = find_jq_date1(fd.year, fd.month, fd.day, fd.hour, fd.minute)
+
     middle_qi = [fd1.get(i) for i in "雨水,春分,穀雨,小滿,夏至,大暑,處暑,秋分,霜降,小雪,冬至,大寒".split(",")][0::2] + [final.strftime('%Y/%m/%d 0:00:00')] 
     #middle = [tuple("雨水","春分"),tuple("穀雨","小滿"),tuple("夏至","大暑"),tuple("處暑","秋分"),tuple("霜降","小雪"),tuple("冬至","大寒")]
     mgua = mgua_list.get(lmonth)
     new_gua_list = [sixtyfourgua.inverse[mgua][0], change(lmonth_yaos, 1), change(lmonth_yaos, 2), change(lmonth_yaos, 3), change(lmonth_yaos, 4), change(lmonth_yaos, 5)]
-    yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
+    
     daygua_list = [multi_key_dict_get(sixtyfourgua, i) for i in new_gua_list]
     #gualist = dict(zip(daygua_list,yearlist))
     ml = get_datelist(middle_qi)
@@ -245,7 +252,7 @@ def wanji_four_gua(year, month, day, hour, minute):
            tuple(ml[4]): daygua_list[4],
            tuple(ml[5]): daygua_list[5]}
     #day_gua = multi_key_dict_get(gualist, datetime.date(year, month, day))
-    j_q = jq(year, month, day, hour, minute)
+    
     day_gua = multi_key_dict_get( {
     ("雨水", "驚蟄","春分","清明"): daygua_list[0],
     ("穀雨", "立夏","小滿","芒種"): daygua_list[1],
@@ -254,7 +261,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     ("霜降","立冬","小雪","大雪"): daygua_list[4],
     ("冬至", "小寒", "大寒","立春",): daygua_list[5]
     }, j_q)
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua}, spring 
 
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
@@ -306,5 +313,5 @@ def display_pan(year, month, day, hour, minute):
 
 
 if __name__ == '__main__':
-    print( wanji_four_gua(2024,6,20,14,54))
-    #print(wanji_four_gua(2024,4,29,10,0))
+    #print( wanji_four_gua(2025,1,30,14,54))
+    print( wanji_four_gua(2025,1,29,10,0))
