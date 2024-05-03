@@ -161,6 +161,7 @@ def get_datelist(datelist):
     return result
 
 def wanji_four_gua(year, month, day, hour, minute):
+    year = lunar_date_d(year, month, day).get("年")
     if year == 0:
         year = 1
     ygz = gangzhi(year, month, day, hour, minute)[0]
