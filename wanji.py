@@ -34,7 +34,7 @@ def generate_time_list(start_time, hours):
     current_time = start_time
     for _ in range(hours // 2):
         time_list.append(current_time)
-        current_time += timedelta(hours=2)
+        current_time += timedelta(hours=1)
     return time_list
 
 def find_closest_value(date_list, current):
@@ -246,7 +246,8 @@ def wanji_four_gua(year, month, day, hour, minute):
     lmonth_yaos = dict(zip(range(1, 13),mlist)).get(1)
     final = generate_month_lists(year)[5][-1]
     j_q_start = datetime.datetime.strptime(fd1.get(j_q), '%Y/%m/%d %H:%M:%S')
-    shock = datetime.datetime.strptime(fd1.get("驚蟄"), '%Y/%m/%d %H:%M:%S')
+    #next_j_q_start = datetime.datetime.strptime(fd1.get(new_list(jieqi_name, j_q)[1]), '%Y/%m/%d %H:%M:%S')
+    #shock = datetime.datetime.strptime(fd1.get("驚蟄"), '%Y/%m/%d %H:%M:%S')
     middle_qi = [fd1.get(i) for i in "雨水,春分,穀雨,小滿,夏至,大暑,處暑,秋分,霜降,小雪,冬至,大寒".split(",")][0::2] + [final.strftime('%Y/%m/%d 0:00:00')] 
     #middle = [tuple("雨水","春分"),tuple("穀雨","小滿"),tuple("夏至","大暑"),tuple("處暑","秋分"),tuple("霜降","小雪"),tuple("冬至","大寒")]
     mgua = mgua_list.get(lmonth)
@@ -259,12 +260,6 @@ def wanji_four_gua(year, month, day, hour, minute):
     [dt.date() if isinstance(dt, datetime.datetime) else dt for dt in sublist]
     for sublist in ml
     ]
-    gualist = {tuple(ml[0]): daygua_list[0],
-           tuple(ml[1]): daygua_list[1],
-           tuple(ml[2]): daygua_list[2],
-           tuple(ml[3]): daygua_list[3],
-           tuple(ml[4]): daygua_list[4],
-           tuple(ml[5]): daygua_list[5]}
     #day_gua = multi_key_dict_get(gualist, datetime.date(year, month, day))
     day_gua_list = {
     ("雨水", "驚蟄","春分","清明"): daygua_list[0],
@@ -280,16 +275,17 @@ def wanji_four_gua(year, month, day, hour, minute):
     dgua = "".join([i.replace("6","8").replace("9","7") for i in dgua])
     dgua_list = [dgua,  change(dgua, 1), change(dgua, 2), change(dgua, 3), change(dgua, 4), change(dgua, 5)]
     hgua_list1 = [multi_key_dict_get(sixtyfourgua, i)  for i in dgua_list]
-    hgua_list = sum([[i] * 30 for i in hgua_list1], [])
+    hgua_list = sum([[i] * 120 for i in hgua_list1], [])
     if hour / 2 == 0:
         rename_hour = {22:21,20:19,18:17,16:15,14:13,12:11,10:9,8:7,6:5,4:3,2:1,0:23}.get(hour)
     else:
         rename_hour = hour
     if rename_hour == 23:
         day = day - 1
-    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0), 360), hgua_list)).get(datetime.datetime(year, month, day, rename_hour, 0))
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
+    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list)).get(datetime.datetime(year, month, day, rename_hour, 0))
+    
 
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
@@ -343,4 +339,4 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2024,5,4,1,16))
+    print( wanji_four_gua(2024,5,4,9,15))
