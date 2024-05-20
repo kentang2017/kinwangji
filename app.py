@@ -37,8 +37,8 @@ with st.sidebar:
     start = st.button('起盤')
  
 with update:
-    st.header('日誌')
-    st.markdown(kty("update.md"))
+    st.header('連結')
+    st.markdown(kty("update.md"), unsafe_allow_html=True)
 
 with pan:
     st.header('堅皇極')
