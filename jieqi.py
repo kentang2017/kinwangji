@@ -125,6 +125,22 @@ def get_next_jieqi_start_date(year, month, day, hour, minute):
             }
         current_day = current_day.after(1)
 
+def gong_wangzhuai(j_q):
+    wangzhuai = list("旺相胎沒死囚休廢")
+    #wangzhuai_num = [3,4,9,2,7,6,1,8]
+    wangzhuai_num = list("震巽離坤兌乾坎艮")
+    wangzhuai_jieqi = {('春分','清明','穀雨'):'春分',
+                        ('立夏','小滿','芒種'):'立夏',
+                        ('夏至','小暑','大暑'):'夏至',
+                        ('立秋','處暑','白露'):'立秋',
+                        ('秋分','寒露','霜降'):'秋分',
+                        ('立冬','小雪','大雪'):'立冬',
+                        ('冬至','小寒','大寒'):'冬至',
+                        ('立春','雨水','驚蟄'):'立春'}
+    r1 = dict(zip(new_list(wangzhuai_num, dict(zip(jieqi_name[0::3],wangzhuai_num )).get(multi_key_dict_get(wangzhuai_jieqi, j_q))), wangzhuai))
+    r2 = {v: k for k, v in r1.items()}
+    return r1, r2
+
 
 def jq(year, month, day, hour, minute):
     """
@@ -315,4 +331,5 @@ if __name__ == '__main__':
     #print( get_before_jieqi_start_date(year, month, day, hour, minute))
     print(gangzhi(year, month, day, hour, minute))
     #print(find_lunar_month(gangzhi(year, month, day, hour, minute)[0]))
+
         
