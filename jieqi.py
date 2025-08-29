@@ -143,6 +143,65 @@ def gong_wangzhuai(j_q):
     return r1, r2
 
 
+def ecliptic_lon(jd_utc):
+    return Ecliptic(Equatorial(Sun(jd_utc).ra,Sun(jd_utc).dec,epoch=jd_utc)).lon
+
+def sta(jd_num):
+    return int(ecliptic_lon(jd_num)*180.0/pi/15)
+
+def iteration(jd,sta):
+    s1=sta(jd)
+    s0=s1
+    dt=1.0
+    while True:
+        jd+=dt
+        s=sta(jd)
+        if s0!=s:
+            s0=s
+            dt=-dt/2
+        if abs(dt)<0.0000001 and s!=s1:
+            break
+    return jd
+
+def find_jq_date(year, month, day, hour, jie_qi):
+    jd_format=Date("{}/{}/{} {}:00:00.00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(hour).zfill(2) ))
+    e_1=ecliptic_lon(jd_format)
+    n_1=int(e_1*180.0/pi/15)+1
+    dzlist = []
+    for i in range(24):
+        if n_1>=24:
+            n_1-=24
+        jd_d=iteration(jd_format)
+        d=Date(jd_d+1/3).tuple()
+        bb_1 = {jieqi_name[n_1]: Date("{}/{}/{} {}:{}:00.00".format(str(d[0]).zfill(4), str(d[1]).zfill(2), str(d[2]).zfill(2), str(d[3]).zfill(2) , str(d[4]).zfill(2)))}
+        n_1+=1
+        dzlist.append(bb_1)
+    return list(dzlist[list(map(lambda i:list(i.keys())[0], dzlist)).index(jie_qi)].values())[0]
+
+def find_jq_date1(year, month, day, hour, minute):
+    current = "{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2))
+    changets = Date("{}/{}/{} {}:{}:00".format(str(year).zfill(4), str(month).zfill(2), str(day).zfill(2),str(hour).zfill(2), str(minute).zfill(2)))
+    jd=Date(changets - 24 * ephem.hour *30)
+    e_1=ecliptic_lon(jd)
+    result1 = {}
+    result = []
+    e=ecliptic_lon(jd)
+    n=int(e*180.0/pi/15)+1
+    for i in range(24):
+        if n>=24:
+            n-=24
+        jd=iteration(jd,sta)
+        d=Date(jd+1/3).tuple()
+        dt = "{}/{}/{} {}:{}:00.00".format(d[0],d[1],d[2],str(d[3]).zfill(2),str(d[4]).zfill(2)).split(".")[0]
+        time_info = {  jieqi_name[n]:dt}
+        n+=1    
+        result.append(time_info)
+    for i in result[1:]:
+        result1.update(i)
+    #j = [list(i.keys())[0] for i in result]
+    return result1
+
+
 def jq(year, month, day, hour, minute):
     """
     Get the current solar term (jieqi) for the given date and time.
@@ -334,5 +393,6 @@ if __name__ == '__main__':
     #print(find_lunar_month(gangzhi(year, month, day, hour, minute)[0]))
 
         
+
 
 
