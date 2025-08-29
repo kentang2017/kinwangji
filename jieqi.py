@@ -5,7 +5,8 @@ Created on Wed Aug 27 08:25:17 2025
 @author: hooki
 """
 
-import datetime, re, math, math
+import datetime, re
+from math import pi
 from itertools import cycle, repeat
 import  sxtwl
 from sxtwl import fromSolar
@@ -394,6 +395,7 @@ if __name__ == '__main__':
     #print(find_lunar_month(gangzhi(year, month, day, hour, minute)[0]))
 
         
+
 
 
 
