@@ -9,6 +9,7 @@ import datetime, re
 from itertools import cycle, repeat
 import  sxtwl
 from sxtwl import fromSolar
+from ephem import Sun, Date, Ecliptic, Equatorial
 import ephem
 
 
@@ -393,6 +394,7 @@ if __name__ == '__main__':
     #print(find_lunar_month(gangzhi(year, month, day, hour, minute)[0]))
 
         
+
 
 
 
