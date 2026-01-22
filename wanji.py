@@ -176,8 +176,12 @@ def get_datelist(datelist):
     return result
 
 def wanji_four_gua(year, month, day, hour, minute):
-    j_q = jq(year, month, day, hour, minute)
     lmonth = lunar_date_d(year, month, day).get("月")
+    if lmonth ==12 and month == 1:
+        year = year - 1
+    else:
+        year = year
+    j_q = jq(year, month, day, hour, minute)
     yearlist = dict(zip(range(1,7), generate_month_lists(year))).get(multi_key_dict_get({(1, 2): 1, (3, 4): 2, (5, 6): 3, (7, 8): 4, (9, 10): 5, (11, 12): 6}, lmonth))
     fd = generate_month_lists(year)[0][0]
     fd1 = find_jq_date1(fd.year, fd.month, fd.day, fd.hour, fd.minute)
@@ -245,7 +249,9 @@ def wanji_four_gua(year, month, day, hour, minute):
     mgua_list =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist]))
     lmonth_yaos = dict(zip(range(1, 13),mlist)).get(1)
     final = generate_month_lists(year)[5][-1]
+
     j_q_start = datetime.datetime.strptime(fd1.get(j_q), '%Y/%m/%d %H:%M:%S')
+    
     #next_j_q_start = datetime.datetime.strptime(fd1.get(new_list(jieqi_name, j_q)[1]), '%Y/%m/%d %H:%M:%S')
     #shock = datetime.datetime.strptime(fd1.get("驚蟄"), '%Y/%m/%d %H:%M:%S')
     middle_qi = [fd1.get(i) for i in "雨水,春分,穀雨,小滿,夏至,大暑,處暑,秋分,霜降,小雪,冬至,大寒".split(",")][0::2] + [final.strftime('%Y/%m/%d 0:00:00')] 
@@ -270,7 +276,6 @@ def wanji_four_gua(year, month, day, hour, minute):
     ("冬至", "小寒", "大寒","立春",): daygua_list[5]
     }
     day_gua = multi_key_dict_get(day_gua_list , j_q)
-    
     dgua = sixtyfourgua.inverse[day_gua][0]
     dgua = "".join([i.replace("6","8").replace("9","7") for i in dgua])
     dgua_list = [dgua,  change(dgua, 1), change(dgua, 2), change(dgua, 3), change(dgua, 4), change(dgua, 5)]
@@ -282,10 +287,9 @@ def wanji_four_gua(year, month, day, hour, minute):
         rename_hour = hour
     if rename_hour == 23:
         day = day - 1
-    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list)).get(datetime.datetime(year, month, day, rename_hour, 0))
-    
-
+    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list))[datetime.datetime(year, month, day, rename_hour, 0)]
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
+
 def display_pan(year, month, day, hour, minute):
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
@@ -339,4 +343,4 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2024,5,4,9,15))
+    print( wanji_four_gua(2026,1,22,21,0))
