@@ -291,6 +291,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
 
 def display_pan(year, month, day, hour, minute):
+    lmonth = lunar_date_d(year, month, day).get("月")
     gz = gangzhi(year, month, day, hour, minute)
     a = "起卦時間︰{}年{}月{}日{}時{}分\n".format(year, month, day, hour, minute)
     b = "農曆︰{}{}月{}日\n".format(cn2an.transform(str(lunar_date_d(year, month, day).get("年"))+"年", "an2cn"), an2cn(lunar_date_d(year, month, day).get("月")), an2cn(lunar_date_d(year,month, day).get("日")))
@@ -348,4 +349,5 @@ def display_pan(year, month, day, hour, minute):
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
     print( wanji_four_gua(2026,1,22,21,0))
+
 
