@@ -247,7 +247,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     sixthmonthgua1 =   fifthmonthgua1[0] + fifthmonthgua1[1] + fifthmonthgua1[2] + fifthmonthgua1[3] + {"7":"8", "8":"7"}.get(fifthmonthgua1[4]) +  {"7":"8", "8":"7"}.get(fifthmonthgua1[5])                 
     mlist = [firstmonthgua1,firstmonthgua1, secondmonthgua1,secondmonthgua1, thirdmonthgua1,thirdmonthgua1, forthmonthgua1,forthmonthgua1, fifthmonthgua1, fifthmonthgua1, sixthmonthgua1, sixthmonthgua1]
     mgua_list =  dict(zip(range(1,13),[multi_key_dict_get(sixtyfourgua, i) for i in mlist]))
-    lmonth_yaos = dict(zip(range(1, 13),mlist)).get(1)
+    lmonth_yaos = dict(zip(range(1, 13),mlist)).get(lmonth)
     final = generate_month_lists(year)[5][-1]
 
     j_q_start = datetime.datetime.strptime(fd1.get(j_q), '%Y/%m/%d %H:%M:%S')
@@ -260,35 +260,70 @@ def wanji_four_gua(year, month, day, hour, minute):
     new_gua_list = [sixtyfourgua.inverse[mgua][0], change(lmonth_yaos, 1), change(lmonth_yaos, 2), change(lmonth_yaos, 3), change(lmonth_yaos, 4), change(lmonth_yaos, 5)]
     
     daygua_list = [multi_key_dict_get(sixtyfourgua, i) for i in new_gua_list]
-    #gualist = dict(zip(daygua_list,yearlist))
-    ml = get_datelist(middle_qi)
-    ml = [
-    [dt.date() if isinstance(dt, datetime.datetime) else dt for dt in sublist]
-    for sublist in ml
-    ]
-    #day_gua = multi_key_dict_get(gualist, datetime.date(year, month, day))
-    day_gua_list = {
-    ("雨水", "驚蟄","春分","清明"): daygua_list[0],
-    ("穀雨", "立夏","小滿","芒種"): daygua_list[1],
-    ("夏至", "小暑", "大暑","立秋"): daygua_list[2],
-    ("處暑", "白露", "秋分","寒露"): daygua_list[3],
-    ("霜降","立冬","小雪","大雪"): daygua_list[4],
-    ("冬至", "小寒", "大寒","立春",): daygua_list[5]
-    }
-    day_gua = multi_key_dict_get(day_gua_list , j_q)
+
+    mq_dts = [datetime.datetime.strptime(d, '%Y/%m/%d %H:%M:%S') for d in middle_qi]
+    target_dt = datetime.datetime(year, month, day, hour, minute)
+
+    day_sub_idx = None
+    day_period_start = None
+    day_period_end = None
+    for i in range(len(mq_dts) - 1):
+        if mq_dts[i] <= target_dt < mq_dts[i + 1]:
+            period_total = (mq_dts[i + 1] - mq_dts[i]).total_seconds()
+            period_elapsed = (target_dt - mq_dts[i]).total_seconds()
+            day_sub_idx = min(int(period_elapsed * 6 / period_total), 5)
+            sub_size = period_total / 6
+            day_period_start = mq_dts[i] + datetime.timedelta(seconds=day_sub_idx * sub_size)
+            day_period_end = mq_dts[i] + datetime.timedelta(seconds=(day_sub_idx + 1) * sub_size)
+            break
+
+    if day_sub_idx is None:
+        day_gua_fallback = {
+            ("雨水", "驚蟄","春分","清明"): 0,
+            ("穀雨", "立夏","小滿","芒種"): 1,
+            ("夏至", "小暑", "大暑","立秋"): 2,
+            ("處暑", "白露", "秋分","寒露"): 3,
+            ("霜降","立冬","小雪","大雪"): 4,
+            ("冬至", "小寒", "大寒","立春"): 5
+        }
+        day_sub_idx = multi_key_dict_get(day_gua_fallback, j_q) or 0
+        next_jq_name = new_list(jieqi_name, j_q)[1]
+        next_jq_str = fd1.get(next_jq_name)
+        if next_jq_str:
+            next_jq_dt = datetime.datetime.strptime(next_jq_str, '%Y/%m/%d %H:%M:%S')
+        else:
+            next_jq_dt = j_q_start + datetime.timedelta(days=15)
+        period_total = (next_jq_dt - j_q_start).total_seconds()
+        period_elapsed = max(0, (target_dt - j_q_start).total_seconds())
+        local_sub_idx = min(int(period_elapsed * 6 / period_total), 5) if period_total > 0 else 0
+        sub_size = period_total / 6
+        day_period_start = j_q_start + datetime.timedelta(seconds=local_sub_idx * sub_size)
+        day_period_end = j_q_start + datetime.timedelta(seconds=(local_sub_idx + 1) * sub_size)
+
+    day_gua = daygua_list[day_sub_idx]
     dgua = sixtyfourgua.inverse[day_gua][0]
     dgua = "".join([i.replace("6","8").replace("9","7") for i in dgua])
     dgua_list = [dgua,  change(dgua, 1), change(dgua, 2), change(dgua, 3), change(dgua, 4), change(dgua, 5)]
     hgua_list1 = [multi_key_dict_get(sixtyfourgua, i)  for i in dgua_list]
-    hgua_list = sum([[i] * 120 for i in hgua_list1], [])
-    if hour / 2 == 0:
-        rename_hour = {22:21,20:19,18:17,16:15,14:13,12:11,10:9,8:7,6:5,4:3,2:1,0:23}.get(hour)
-    else:
-        rename_hour = hour
-    if rename_hour == 23:
-        day = day - 1
-    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list))[datetime.datetime(year, month, day, rename_hour, 0)]
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
+
+    day_total = (day_period_end - day_period_start).total_seconds()
+    day_elapsed = (target_dt - day_period_start).total_seconds()
+    hour_sub_idx = min(int(day_elapsed * 6 / day_total), 5)
+    hour_sub_size = day_total / 6
+    hour_period_start = day_period_start + datetime.timedelta(seconds=hour_sub_idx * hour_sub_size)
+    hour_period_end = day_period_start + datetime.timedelta(seconds=(hour_sub_idx + 1) * hour_sub_size)
+    hourgua = hgua_list1[hour_sub_idx]
+
+    hgua_code = sixtyfourgua.inverse[hourgua][0]
+    hgua_code = "".join([i.replace("6","8").replace("9","7") for i in hgua_code])
+    mingua_codes = [hgua_code, change(hgua_code, 1), change(hgua_code, 2), change(hgua_code, 3), change(hgua_code, 4), change(hgua_code, 5)]
+    mingua_list1 = [multi_key_dict_get(sixtyfourgua, i) for i in mingua_codes]
+    hour_total = (hour_period_end - hour_period_start).total_seconds()
+    hour_elapsed = (target_dt - hour_period_start).total_seconds()
+    min_sub_idx = min(int(hour_elapsed * 6 / hour_total), 5)
+    mingua = mingua_list1[min_sub_idx]
+
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua, "分卦":mingua}
 
 def display_pan(year, month, day, hour, minute):
     lmonth = lunar_date_d(year, month, day).get("月")
@@ -332,15 +367,18 @@ def display_pan(year, month, day, hour, minute):
     hour_g =  wj.get("時卦")
     hour_g1 =  one2two(hour_g)
     hour_g_code = [guayaodict.get(i) for i in sixtyfourgua.inverse[hour_g][0].replace("6","8").replace("9","7")]
+    min_g =  wj.get("分卦")
+    min_g1 =  one2two(min_g)
+    min_g_code = [guayaodict.get(i) for i in sixtyfourgua.inverse[min_g][0].replace("6","8").replace("9","7")]
     
-    g1 = "   正卦            運卦            世卦             旬卦             年卦             月卦             日卦             時卦\n"
-    gg = " 【{}】         【{}】         【{}】          【{}】          【{}】         【{}】         【{}】          【{}】\n".format(mg1, yg1, sg1, shg1, yrg1, month_g1, day_g1, hour_g1)
-    g2 = "  {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[5], yg_code[5], sg_code[5], shg_code[5], yrg_code[5],month_g_code[5], day_g_code[5], hour_g_code[5])
-    g3 = "  {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[4], yg_code[4], sg_code[4], shg_code[4], yrg_code[4],month_g_code[4], day_g_code[4], hour_g_code[4])
-    g4 = "  {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[3], yg_code[3], sg_code[3], shg_code[3], yrg_code[3],month_g_code[3], day_g_code[3], hour_g_code[3])
-    g5 = "  {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[2], yg_code[2], sg_code[2], shg_code[2], yrg_code[2],month_g_code[2], day_g_code[2], hour_g_code[2])
-    g6 = "  {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[1], yg_code[1], sg_code[1], shg_code[1], yrg_code[1],month_g_code[1], day_g_code[1], hour_g_code[1])
-    g7 = "  {}         {}         {}         {}         {}         {}         {}         {}\n\n".format(mg_code[0], yg_code[0], sg_code[0], shg_code[0], yrg_code[0],month_g_code[0], day_g_code[0], hour_g_code[0])
+    g1 = "   正卦            運卦            世卦             旬卦             年卦             月卦             日卦             時卦             分卦\n"
+    gg = " 【{}】         【{}】         【{}】          【{}】          【{}】         【{}】         【{}】          【{}】          【{}】\n".format(mg1, yg1, sg1, shg1, yrg1, month_g1, day_g1, hour_g1, min_g1)
+    g2 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[5], yg_code[5], sg_code[5], shg_code[5], yrg_code[5],month_g_code[5], day_g_code[5], hour_g_code[5], min_g_code[5])
+    g3 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[4], yg_code[4], sg_code[4], shg_code[4], yrg_code[4],month_g_code[4], day_g_code[4], hour_g_code[4], min_g_code[4])
+    g4 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[3], yg_code[3], sg_code[3], shg_code[3], yrg_code[3],month_g_code[3], day_g_code[3], hour_g_code[3], min_g_code[3])
+    g5 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[2], yg_code[2], sg_code[2], shg_code[2], yrg_code[2],month_g_code[2], day_g_code[2], hour_g_code[2], min_g_code[2])
+    g6 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n".format(mg_code[1], yg_code[1], sg_code[1], shg_code[1], yrg_code[1],month_g_code[1], day_g_code[1], hour_g_code[1], min_g_code[1])
+    g7 = "  {}         {}         {}         {}         {}         {}         {}         {}         {}\n\n".format(mg_code[0], yg_code[0], sg_code[0], shg_code[0], yrg_code[0],month_g_code[0], day_g_code[0], hour_g_code[0], min_g_code[0])
     yrgd = "【"+ yrg +"】卦\n" +"".join([gua_dist.get(yrg).get(i)+"\n" for i in list(range(0,7))])
     return a+b+c+c0+g+g1+gg+g2+g3+g4+g5+g6+g7+yrgd
 
