@@ -264,9 +264,9 @@ def wanji_four_gua(year, month, day, hour, minute):
     mq_dts = [datetime.datetime.strptime(d, '%Y/%m/%d %H:%M:%S') for d in middle_qi]
     target_dt = datetime.datetime(year, month, day, hour, minute)
 
-    day_sub_idx = 0
-    day_period_start = j_q_start
-    day_period_end = j_q_start + datetime.timedelta(days=10)
+    day_sub_idx = None
+    day_period_start = None
+    day_period_end = None
     for i in range(len(mq_dts) - 1):
         if mq_dts[i] <= target_dt < mq_dts[i + 1]:
             period_total = (mq_dts[i + 1] - mq_dts[i]).total_seconds()
@@ -276,6 +276,29 @@ def wanji_four_gua(year, month, day, hour, minute):
             day_period_start = mq_dts[i] + datetime.timedelta(seconds=day_sub_idx * sub_size)
             day_period_end = mq_dts[i] + datetime.timedelta(seconds=(day_sub_idx + 1) * sub_size)
             break
+
+    if day_sub_idx is None:
+        day_gua_fallback = {
+            ("雨水", "驚蟄","春分","清明"): 0,
+            ("穀雨", "立夏","小滿","芒種"): 1,
+            ("夏至", "小暑", "大暑","立秋"): 2,
+            ("處暑", "白露", "秋分","寒露"): 3,
+            ("霜降","立冬","小雪","大雪"): 4,
+            ("冬至", "小寒", "大寒","立春"): 5
+        }
+        day_sub_idx = multi_key_dict_get(day_gua_fallback, j_q) or 0
+        next_jq_name = new_list(jieqi_name, j_q)[1]
+        next_jq_str = fd1.get(next_jq_name)
+        if next_jq_str:
+            next_jq_dt = datetime.datetime.strptime(next_jq_str, '%Y/%m/%d %H:%M:%S')
+        else:
+            next_jq_dt = j_q_start + datetime.timedelta(days=15)
+        period_total = (next_jq_dt - j_q_start).total_seconds()
+        period_elapsed = max(0, (target_dt - j_q_start).total_seconds())
+        local_sub_idx = min(int(period_elapsed * 6 / period_total), 5) if period_total > 0 else 0
+        sub_size = period_total / 6
+        day_period_start = j_q_start + datetime.timedelta(seconds=local_sub_idx * sub_size)
+        day_period_end = j_q_start + datetime.timedelta(seconds=(local_sub_idx + 1) * sub_size)
 
     day_gua = daygua_list[day_sub_idx]
     dgua = sixtyfourgua.inverse[day_gua][0]
