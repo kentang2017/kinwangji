@@ -14,8 +14,10 @@ from itertools import cycle, repeat
 import cn2an
 from cn2an import an2cn
 import os
+import sys
 import pickle
 from difflib import get_close_matches
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from jieqi import *
 
 base = os.path.abspath(os.path.dirname(__file__))
