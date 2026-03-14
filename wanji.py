@@ -14,10 +14,8 @@ from itertools import cycle, repeat
 import cn2an
 from cn2an import an2cn
 import os
-import sys
 import pickle
 from difflib import get_close_matches
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from jieqi import *
 
 base = os.path.abspath(os.path.dirname(__file__))
@@ -290,7 +288,7 @@ def wanji_four_gua(year, month, day, hour, minute):
     if rename_hour == 23:
         day = day - 1
     hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list))[datetime.datetime(year, month, day, rename_hour, 0)]
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}, hgua_list1
 
 def display_pan(year, month, day, hour, minute):
     lmonth = lunar_date_d(year, month, day).get("月")
@@ -350,6 +348,6 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2026,1,22,21,0))
+    print( wanji_four_gua(2026,2,28,20,0))
 
 
