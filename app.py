@@ -32,8 +32,21 @@ def kty(path):
 st.set_page_config(layout="wide",page_title="堅皇極-皇極經世排盤")
 pan,update = st.tabs([' 排盤 ', ' 連結 '])
 with st.sidebar:
-    idate = st.date_input('日期', pdlm.now(tz='Asia/Shanghai').date())
-    pp_time = st.time_input("時間", pdlm.now(tz='Asia/Shanghai').time())
+    now_shanghai = pdlm.now(tz='Asia/Shanghai')
+    st.subheader('📅 日期時間選擇')
+    idate = st.date_input(
+        '選擇日期',
+        now_shanghai.date(),
+        min_value=datetime.date(1900, 1, 1),
+        max_value=datetime.date(2100, 12, 31)
+    )
+    st.markdown('**⏰ 選擇時間**')
+    col1, col2 = st.columns(2)
+    with col1:
+        sel_hour = st.number_input("時", min_value=0, max_value=23, value=now_shanghai.hour, step=1)
+    with col2:
+        sel_minute = st.number_input("分", min_value=0, max_value=59, value=now_shanghai.minute, step=1)
+    pp_time = datetime.time(int(sel_hour), int(sel_minute))
  
 with update:
     st.header('連結')
