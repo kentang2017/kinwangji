@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat Mar 14 11:14:18 2026
+
+@author: hooki
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Jun  2 12:44:35 2023
 
 @author: kentang
@@ -120,6 +127,7 @@ def closest1(lst, K):
 
 def closest2(lst, K):
     return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
+
 #旬
 def liujiashun_dict():
     return dict(zip(list(map(lambda x: tuple(x), list(map(lambda x:new_list(jiazi(), x)[0:10] ,jiazi()[0::10])))), jiazi()[0::10]))
@@ -275,7 +283,10 @@ def wanji_four_gua(year, month, day, hour, minute):
     ("霜降","立冬","小雪","大雪"): daygua_list[4],
     ("冬至", "小寒", "大寒","立春",): daygua_list[5]
     }
-    day_gua = multi_key_dict_get(day_gua_list , j_q)
+    # 修改部分：使用日干支计算日卦，使其随日变化
+    dgz = gangzhi(year, month, day, hour, minute)[2]  # 日干支
+    day_gua = dict(zip(jiazi(), new_list(list(wangji_gua.values()), mgua))).get(dgz)
+
     dgua = sixtyfourgua.inverse[day_gua][0]
     dgua = "".join([i.replace("6","8").replace("9","7") for i in dgua])
     dgua_list = [dgua,  change(dgua, 1), change(dgua, 2), change(dgua, 3), change(dgua, 4), change(dgua, 5)]
@@ -287,8 +298,11 @@ def wanji_four_gua(year, month, day, hour, minute):
         rename_hour = hour
     if rename_hour == 23:
         day = day - 1
-    hourgua = dict(zip(generate_time_list( j_q_start.replace(minute=0, second=0),1440), hgua_list))[datetime.datetime(year, month, day, rename_hour, 0)]
-    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}, hgua_list1
+    # 修改部分：使用时干支计算时卦，使其随时变化（每2小时变一次卦）
+    hgz = gangzhi(year, month, day, hour, minute)[3]  # 时干支
+    hourgua = dict(zip(jiazi(), new_list(list(wangji_gua.values()), day_gua))).get(hgz)
+
+    return {"會":hui, "運":yun, "世":shi, "運卦動爻":yun_gua_yao, "世卦動爻": shi_yao, "旬卦動爻":shun_yao ,"正卦":main_gua, "運卦":yungua, "世卦":shigua, "旬卦":shun_gua, "年卦":yeargua, "月卦":mgua, "日卦":day_gua, "時卦":hourgua}
 
 def display_pan(year, month, day, hour, minute):
     lmonth = lunar_date_d(year, month, day).get("月")
@@ -348,6 +362,5 @@ def display_pan(year, month, day, hour, minute):
 
 if __name__ == '__main__':
     #print( wanji_four_gua(2025,1,30,14,54))
-    print( wanji_four_gua(2026,2,28,20,0))
-
+    print( wanji_four_gua(2026,3,14,15,0))
 
