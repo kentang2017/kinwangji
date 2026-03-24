@@ -192,7 +192,10 @@ with st.sidebar:
     # Project image
     img_path = os.path.join(os.path.dirname(__file__), "pic", "kwj.png")
     if os.path.isfile(img_path):
-        st.image(img_path, caption=_t("image_caption"), use_container_width=True)
+        try:
+            st.image(img_path, caption=_t("image_caption"), use_container_width=True)
+        except TypeError:
+            st.image(img_path, caption=_t("image_caption"), use_column_width=True)
 
     # Introduction
     st.subheader(_t("sidebar_title"))
