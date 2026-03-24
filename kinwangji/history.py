@@ -40,7 +40,9 @@ def load_history() -> List[Dict[str, Any]]:
 
     fields = raw.split(",")
     records: List[Dict[str, Any]] = []
-    for i in range(0, len(fields) - 6, 7):
+    for i in range(0, len(fields), 7):
+        if i + 6 >= len(fields):
+            break
         records.append(
             {
                 "start_year": int(fields[i]),

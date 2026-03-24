@@ -18,7 +18,7 @@ class TestLoadHistory:
     def test_record_keys(self):
         records = load_history()
         expected_keys = {"start_year", "duration", "dynasty", "title", "name", "era"}
-        for rec in records[:5]:
+        for rec in records:
             assert set(rec.keys()) == expected_keys
 
     def test_start_year_is_int(self):

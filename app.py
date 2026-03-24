@@ -134,7 +134,7 @@ _TEXTS = {
         "pypi_link": "PyPI Page",
         "wiki_link": "Wikipedia: Huangji Jingshi",
         "image_caption": "Huangji Jingshi Diagram",
-        "tab_history": "📜 Random Year",
+        "tab_history": "📜 Historical Year",
         "history_title": "📜 Random Historical Year Hexagram",
         "history_desc": "A random year is drawn to display its year hexagram and the dynasty in power.",
         "history_year": "Year",
@@ -422,7 +422,7 @@ with tab_history:
     try:
         rand_result = wanji_four_gua(rand_year, 6, 15, 12, 0)
         rand_year_gua = rand_result["年卦"]
-    except (ValueError, Exception):
+    except Exception:
         rand_year_gua = "—"
 
     # Display year and hexagram
