@@ -136,6 +136,32 @@ def _cycle_position(value: int, cycle_length: int) -> int:
     return ((value - 1) % cycle_length) + 1
 
 
+# ---------------------------------------------------------------------------
+# I Ching hexagram Unicode symbols (U+4DC0–U+4DFF, King Wen sequence)
+# ---------------------------------------------------------------------------
+
+_GUA_UNICODE = {
+    "乾": "䷀", "坤": "䷁", "屯": "䷂", "蒙": "䷃", "需": "䷄",
+    "訟": "䷅", "師": "䷆", "比": "䷇", "小畜": "䷈", "履": "䷉",
+    "泰": "䷊", "否": "䷋", "同人": "䷌", "大有": "䷍", "謙": "䷎",
+    "豫": "䷏", "隨": "䷐", "蠱": "䷑", "臨": "䷒", "觀": "䷓",
+    "噬嗑": "䷔", "賁": "䷕", "剝": "䷖", "復": "䷗", "無妄": "䷘",
+    "大畜": "䷙", "頤": "䷚", "大過": "䷛", "坎": "䷜", "離": "䷝",
+    "咸": "䷞", "恆": "䷟", "遯": "䷠", "大壯": "䷡", "晉": "䷢",
+    "明夷": "䷣", "家人": "䷤", "睽": "䷥", "蹇": "䷦", "解": "䷧",
+    "損": "䷨", "益": "䷩", "夬": "䷪", "姤": "䷫", "萃": "䷬",
+    "升": "䷭", "困": "䷮", "井": "䷯", "革": "䷰", "鼎": "䷱",
+    "震": "䷲", "艮": "䷳", "漸": "䷴", "歸妹": "䷵", "豐": "䷶",
+    "旅": "䷷", "巽": "䷸", "兌": "䷹", "渙": "䷺", "節": "䷻",
+    "中孚": "䷼", "小過": "䷽", "既濟": "䷾", "未濟": "䷿",
+}
+
+
+def _gua_symbol(name: str) -> str:
+    """Return the Unicode hexagram symbol for a given hexagram *name*."""
+    return _GUA_UNICODE.get(name, "☰")
+
+
 def _hexagram_card(icon: str, gua_name: str, label: str) -> str:
     """Return an HTML snippet for a centred hexagram display card."""
     return (
@@ -330,7 +356,7 @@ with tab_pan:
             with col:
                 gua_name = one2two(result[gua_key])
                 st.markdown(
-                    _hexagram_card("☰", gua_name, _t(label_key)),
+                    _hexagram_card(_gua_symbol(result[gua_key]), gua_name, _t(label_key)),
                     unsafe_allow_html=True,
                 )
                 if line_key:
@@ -350,7 +376,7 @@ with tab_pan:
             with col:
                 gua_name = one2two(result[gua_key])
                 st.markdown(
-                    _hexagram_card("☷", gua_name, _t(label_key)),
+                    _hexagram_card(_gua_symbol(result[gua_key]), gua_name, _t(label_key)),
                     unsafe_allow_html=True,
                 )
 
