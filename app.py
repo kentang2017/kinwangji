@@ -131,6 +131,22 @@ def _t(key: str) -> str:
     return _TEXTS[lang][key]
 
 
+def _cycle_position(value: int, cycle_length: int) -> int:
+    """Normalize a 1-based cycle value into its position within a parent cycle."""
+    return ((value - 1) % cycle_length) + 1
+
+
+def _hexagram_card(icon: str, gua_name: str, label: str) -> str:
+    """Return an HTML snippet for a centred hexagram display card."""
+    return (
+        f"<div style='text-align:center;'>"
+        f"<span style='font-size:2rem;'>{icon}</span><br>"
+        f"<b style='font-size:1.3rem;'>{gua_name}</b><br>"
+        f"<span style='color:gray;'>{label}</span>"
+        f"</div>"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Helper – fetch remote Markdown (used by the Links tab)
 # ---------------------------------------------------------------------------
@@ -275,9 +291,9 @@ with tab_pan:
     shi_val = result["世"]
 
     # Compute positions within their parent cycle
-    hui_in_yuan = ((hui_val - 1) % 12) + 1       # 1–12
-    yun_in_hui = ((yun_val - 1) % 30) + 1        # 1–30
-    shi_in_yun = ((shi_val - 1) % 12) + 1         # 1–12
+    hui_in_yuan = _cycle_position(hui_val, 12)   # 1–12
+    yun_in_hui = _cycle_position(yun_val, 30)    # 1–30
+    shi_in_yun = _cycle_position(shi_val, 12)    # 1–12
 
     cyc_cols = st.columns(3)
     with cyc_cols[0]:
@@ -311,11 +327,7 @@ with tab_pan:
             with col:
                 gua_name = one2two(result[gua_key])
                 st.markdown(
-                    f"<div style='text-align:center;'>"
-                    f"<span style='font-size:2rem;'>☰</span><br>"
-                    f"<b style='font-size:1.3rem;'>{gua_name}</b><br>"
-                    f"<span style='color:gray;'>{_t(label_key)}</span>"
-                    f"</div>",
+                    _hexagram_card("☰", gua_name, _t(label_key)),
                     unsafe_allow_html=True,
                 )
                 if line_key:
@@ -335,11 +347,7 @@ with tab_pan:
             with col:
                 gua_name = one2two(result[gua_key])
                 st.markdown(
-                    f"<div style='text-align:center;'>"
-                    f"<span style='font-size:2rem;'>☷</span><br>"
-                    f"<b style='font-size:1.3rem;'>{gua_name}</b><br>"
-                    f"<span style='color:gray;'>{_t(label_key)}</span>"
-                    f"</div>",
+                    _hexagram_card("☷", gua_name, _t(label_key)),
                     unsafe_allow_html=True,
                 )
 
