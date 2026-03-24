@@ -1,4 +1,5 @@
 import os
+import random
 import urllib.request
 import datetime
 
@@ -8,6 +9,7 @@ import pytz
 
 from kinwangji.wanji import display_pan, wanji_four_gua, one2two
 from kinwangji.jieqi import jq, gong_wangzhuai
+from kinwangji.history import history_for_year
 
 # ---------------------------------------------------------------------------
 # Translations
@@ -67,6 +69,17 @@ _TEXTS = {
         "pypi_link": "PyPI 頁面",
         "wiki_link": "維基百科：皇極經世",
         "image_caption": "皇極經世示意圖",
+        "tab_history": "📜 隨機歷史年卦",
+        "history_title": "📜 隨機歷史年卦",
+        "history_desc": "隨機抽取一年，顯示該年的年卦及當時的朝代歷史。",
+        "history_year": "年份",
+        "history_year_gua": "年卦",
+        "history_dynasty": "朝代",
+        "history_title_lbl": "稱號",
+        "history_name": "名諱",
+        "history_era": "年號",
+        "history_refresh": "🔄 再抽一年",
+        "history_no_data": "該年暫無歷史資料。",
     },
     "en": {
         "page_title": "KinWangJi — Huangji Jingshi Divination",
@@ -121,6 +134,17 @@ _TEXTS = {
         "pypi_link": "PyPI Page",
         "wiki_link": "Wikipedia: Huangji Jingshi",
         "image_caption": "Huangji Jingshi Diagram",
+        "tab_history": "📜 Random Year",
+        "history_title": "📜 Random Historical Year Hexagram",
+        "history_desc": "A random year is drawn to display its year hexagram and the dynasty in power.",
+        "history_year": "Year",
+        "history_year_gua": "Year Hexagram",
+        "history_dynasty": "Dynasty",
+        "history_title_lbl": "Title",
+        "history_name": "Name",
+        "history_era": "Era",
+        "history_refresh": "🔄 Draw Again",
+        "history_no_data": "No historical data available for this year.",
     },
 }
 
@@ -285,8 +309,8 @@ except ValueError:
 # Tabs
 # ---------------------------------------------------------------------------
 
-tab_pan, tab_detail, tab_links = st.tabs(
-    [_t("tab_pan"), _t("tab_detail"), _t("tab_links")]
+tab_pan, tab_history, tab_detail, tab_links = st.tabs(
+    [_t("tab_pan"), _t("tab_history"), _t("tab_detail"), _t("tab_links")]
 )
 
 # ---- Tab 1: Visual Board -------------------------------------------------
@@ -380,12 +404,62 @@ with tab_pan:
                     unsafe_allow_html=True,
                 )
 
-# ---- Tab 2: Full text board -----------------------------------------------
+# ---- Tab 2: Random Historical Year Hexagram --------------------------------
+with tab_history:
+    st.header(_t("history_title"))
+    st.caption(_t("history_desc"))
+
+    # Initialise or refresh the random year stored in session state
+    if "random_year" not in st.session_state:
+        st.session_state["random_year"] = random.randint(1900, 2100)
+
+    if st.button(_t("history_refresh")):
+        st.session_state["random_year"] = random.randint(1900, 2100)
+
+    rand_year = st.session_state["random_year"]
+
+    # Compute year hexagram using a fixed mid-year date
+    try:
+        rand_result = wanji_four_gua(rand_year, 6, 15, 12, 0)
+        rand_year_gua = rand_result["年卦"]
+    except (ValueError, Exception):
+        rand_year_gua = "—"
+
+    # Display year and hexagram
+    hcol1, hcol2 = st.columns(2)
+    with hcol1:
+        st.metric(_t("history_year"), str(rand_year))
+    with hcol2:
+        if rand_year_gua and rand_year_gua != "—":
+            gua_display = f"{_gua_symbol(rand_year_gua)} {one2two(rand_year_gua)}"
+        else:
+            gua_display = "—"
+        st.metric(_t("history_year_gua"), gua_display)
+
+    st.divider()
+
+    # Historical records for the random year
+    hist_records = history_for_year(rand_year)
+    if hist_records:
+        for rec in hist_records:
+            cols = st.columns(4)
+            with cols[0]:
+                st.markdown(f"**{_t('history_dynasty')}**: {rec['dynasty']}")
+            with cols[1]:
+                st.markdown(f"**{_t('history_title_lbl')}**: {rec['title']}")
+            with cols[2]:
+                st.markdown(f"**{_t('history_name')}**: {rec['name'] or '—'}")
+            with cols[3]:
+                st.markdown(f"**{_t('history_era')}**: {rec['era']}")
+    else:
+        st.info(_t("history_no_data"))
+
+# ---- Tab 3: Full text board -----------------------------------------------
 with tab_detail:
     st.subheader(_t("full_board"))
     st.code(pan_text, language=None)
 
-# ---- Tab 3: Links ---------------------------------------------------------
+# ---- Tab 4: Links ---------------------------------------------------------
 with tab_links:
     st.header(_t("links_header"))
     content = _fetch_remote_md(

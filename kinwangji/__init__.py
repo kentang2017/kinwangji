@@ -20,6 +20,8 @@ from .jieqi import (
     get_next_jieqi_start_date,
 )
 
+from .history import load_history, history_for_year
+
 __all__ = [
     "wanji_four_gua",
     "display_pan",
@@ -30,4 +32,6 @@ __all__ = [
     "gong_wangzhuai",
     "get_jieqi_start_date",
     "get_next_jieqi_start_date",
+    "load_history",
+    "history_for_year",
 ]
