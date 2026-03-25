@@ -27,7 +27,7 @@
 
 ---
 
-## 簡介
+## 簡介 Introduction
 
 邵雍（1011–1077），字堯夫，號康節，北宋五子之一，以先天易學與象數哲學聞名。
 《皇極經世》窮三十年觀天地之消長，建構宇宙大數：
@@ -35,8 +35,6 @@
 一元十二會、一會三十運、一運十二世、一世三十年，週而復始，推演古今治亂興亡。
 
 本專案以現代 Python 重現部分核心算法，並提供互動介面，讓使用者輸入日期即可觀察「皇極」視角下的時空定位。
-
-## Introduction
 
 **Huangji Jingshi** (皇極經世, *Book of Supreme World Ordering Principles*) was authored by Shao Yong (邵雍, 1011–1077), one of the Five Masters of Northern Song and a pioneer of *Xiantian* (先天) Yi-learning and image-number philosophy.
 
