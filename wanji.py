@@ -115,7 +115,7 @@ _MIN_YEAR: int = -4712
 _MAX_YEAR: int = 9999
 
 
-def _rotate_gua_cycle(target: str) -> list:
+def _rotate_gua_cycle(target: str) -> List[str]:
     """Rotate the 60-gua cycle so that *target* is (or is near) position 0.
 
     If *target* is one of the four special hexagrams (乾/坤/離/坎) that are
