@@ -24,6 +24,13 @@ from .history import load_history, history_for_year
 
 from .classics import list_classics, load_classic, get_sections
 
+from .xinyi import (
+    number_qigua,
+    datetime_qigua,
+    direction_qigua,
+    character_qigua,
+)
+
 __all__ = [
     "wanji_four_gua",
     "display_pan",
@@ -39,4 +46,8 @@ __all__ = [
     "list_classics",
     "load_classic",
     "get_sections",
+    "number_qigua",
+    "datetime_qigua",
+    "direction_qigua",
+    "character_qigua",
 ]
