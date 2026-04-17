@@ -310,13 +310,17 @@ try:
     pan_text = display_pan(y, m, d, h, mi)
     solar_term = jq(y, m, d, h, mi)
     wz = gong_wangzhuai(solar_term)
-except ValueError:
+except Exception:
     now = datetime.datetime.now(pytz.timezone("Asia/Hong_Kong"))
     y, m, d, h, mi = now.year, now.month, now.day, now.hour, now.minute
-    result = wanji_four_gua(y, m, d, h, mi)
-    pan_text = display_pan(y, m, d, h, mi)
-    solar_term = jq(y, m, d, h, mi)
-    wz = gong_wangzhuai(solar_term)
+    try:
+        result = wanji_four_gua(y, m, d, h, mi)
+        pan_text = display_pan(y, m, d, h, mi)
+        solar_term = jq(y, m, d, h, mi)
+        wz = gong_wangzhuai(solar_term)
+    except Exception as e:
+        st.error(f"無法計算排盤 / Unable to compute divination board: {e}")
+        st.stop()
 
 # ---------------------------------------------------------------------------
 # Tabs
