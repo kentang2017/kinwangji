@@ -307,7 +307,7 @@ def number_qigua(upper_num: int, lower_num: int) -> Dict[str, Any]:
     Examples:
         >>> r = number_qigua(5, 10)
         >>> r["本卦"]
-        '小過'
+        '中孚'
     """
     if upper_num < 1 or lower_num < 1:
         raise ValueError(
