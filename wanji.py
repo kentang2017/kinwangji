@@ -614,17 +614,27 @@ def wanji_four_gua(
     mgua = mgua_list.get(lmonth)
 
     # -- Day hexagram (日卦) --
-    day_gua = dict(
-        zip(jiazi(), new_list(list(wangji_gua.values()), mgua))
-    ).get(dgz)
+    try:
+        day_gua = dict(
+            zip(jiazi(), new_list(list(wangji_gua.values()), mgua))
+        ).get(dgz)
+    except ValueError:
+        day_gua = dict(
+            zip(jiazi(), new_list(list(wangji_gua2.values()), mgua))
+        ).get(dgz)
 
     # -- Hour hexagram (時卦) --
-    hourgua = dict(
-        zip(jiazi(), new_list(list(wangji_gua.values()), day_gua))
-    ).get(hgz)
+    try:
+        hourgua = dict(
+            zip(jiazi(), new_list(list(wangji_gua.values()), day_gua))
+        ).get(hgz)
+    except ValueError:
+        hourgua = dict(
+            zip(jiazi(), new_list(list(wangji_gua2.values()), day_gua))
+        ).get(hgz)
 
     # -- Minute hexagram (分卦): offset by minute stems-branches position --
-    gua_cycle = list(wangji_gua.values())
+    gua_cycle = list(wangji_gua2.values())
 
     try:
         base_idx = gua_cycle.index(hourgua)
@@ -636,8 +646,8 @@ def wanji_four_gua(
     except ValueError:
         fen_offset = 0
 
-    adjusted_base = (base_idx + fen_offset) % 60
-    new_idx = (adjusted_base + minute) % 60
+    adjusted_base = (base_idx + fen_offset) % 64
+    new_idx = (adjusted_base + minute) % 64
     fen_gua = gua_cycle[new_idx]
 
     return {
