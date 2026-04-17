@@ -246,6 +246,24 @@ class TestWanjiFourGua:
         result = wanji_four_gua(2025, 6, 15, 10, 30)
         assert len(result["干支"]) == 5
 
+    @pytest.mark.parametrize(
+        "year,month,day,hour,expected_special",
+        [
+            (2026, 5, 1, 12, "乾"),
+            (2021, 8, 15, 0, "離"),
+            (2029, 2, 15, 0, "坎"),
+            (2024, 12, 1, 0, "離"),
+        ],
+    )
+    def test_special_hexagram_month_no_crash(self, year, month, day, hour, expected_special):
+        """Dates whose month hexagram is 乾/坤/離/坎 must not raise ValueError."""
+        result = wanji_four_gua(year, month, day, hour, 0)
+        assert result["月卦"] == expected_special
+        # All returned hexagrams must be valid names
+        valid = set(wangji_gua.values()) | {"乾", "坤", "離", "坎"}
+        for key in ["正卦", "運卦", "世卦", "旬卦", "年卦", "月卦", "日卦", "時卦", "分卦"]:
+            assert result[key] in valid, f"{key}={result[key]} not valid"
+
 
 # ---------------------------------------------------------------------------
 # _derive_month_hexagrams() — month-hexagram derivation

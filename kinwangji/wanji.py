@@ -105,9 +105,29 @@ wangji_gua2: Dict[int, str] = dict(
     )
 )
 
+# Mapping the 4 special hexagrams (excluded from the 60-gua cycle) to their
+# next neighbor in the cycle.  Used when ``new_list`` would fail because the
+# target hexagram is not in ``wangji_gua``.
+_SPECIAL_GUA_NEIGHBOR: Dict[str, str] = {"乾": "姤", "坤": "復", "離": "革", "坎": "蒙"}
+
 # Supported year range.
 _MIN_YEAR: int = -4712
 _MAX_YEAR: int = 9999
+
+
+def _rotate_gua_cycle(target: str) -> List[str]:
+    """Rotate the 60-gua cycle so that *target* is (or is near) position 0.
+
+    If *target* is one of the four special hexagrams (乾/坤/離/坎) that are
+    absent from :data:`wangji_gua`, the nearest successor in the 64-gua
+    ordering is used as the rotation pivot instead.
+
+    Returns:
+        A rotated copy of ``wangji_gua.values()`` with 60 elements.
+    """
+    gua_list = list(wangji_gua.values())
+    actual = _SPECIAL_GUA_NEIGHBOR.get(target, target)
+    return new_list(gua_list, actual)
 
 
 # ---------------------------------------------------------------------------
@@ -601,7 +621,7 @@ def wanji_four_gua(
     cyear = lunar_date_d(year, month, day).get("年")
     try:
         yeargua = dict(
-            zip(jiazi(), new_list(list(wangji_gua.values()), shigua))
+            zip(jiazi(), _rotate_gua_cycle(shigua))
         ).get(ygz)
     except ValueError:
         yeargua = dict(
@@ -615,12 +635,12 @@ def wanji_four_gua(
 
     # -- Day hexagram (日卦) --
     day_gua = dict(
-        zip(jiazi(), new_list(list(wangji_gua.values()), mgua))
+        zip(jiazi(), _rotate_gua_cycle(mgua))
     ).get(dgz)
 
     # -- Hour hexagram (時卦) --
     hourgua = dict(
-        zip(jiazi(), new_list(list(wangji_gua.values()), day_gua))
+        zip(jiazi(), _rotate_gua_cycle(day_gua))
     ).get(hgz)
 
     # -- Minute hexagram (分卦): offset by minute stems-branches position --
