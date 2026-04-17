@@ -11,6 +11,15 @@ from kinwangji.wanji import display_pan, wanji_four_gua, one2two
 from kinwangji.jieqi import jq, gong_wangzhuai
 from kinwangji.history import history_for_year
 from kinwangji.classics import list_classics, load_classic, get_sections
+from kinwangji.xinyi import (
+    number_qigua,
+    datetime_qigua,
+    direction_qigua,
+    character_qigua,
+    XIANTIAN_NUM,
+    DIRECTION_GUA,
+    TRIGRAM_CODE,
+)
 
 # ---------------------------------------------------------------------------
 # Translations
@@ -87,6 +96,34 @@ _TEXTS = {
         "classics_select_text": "選擇經典",
         "classics_select_section": "選擇章節",
         "classics_full_text": "顯示完整原文",
+        "tab_xinyi": "🌸 心易發微",
+        "xinyi_title": "🌸 心易發微起盤",
+        "xinyi_desc": "心易發微（梅花易數）起卦法，根據楊向春《皇極經世心易發微》。",
+        "xinyi_method": "起卦方法",
+        "xinyi_number": "先天數起卦",
+        "xinyi_datetime": "年月日時起卦",
+        "xinyi_direction": "後天方位起卦",
+        "xinyi_character": "字數起卦",
+        "xinyi_upper_num": "上卦數",
+        "xinyi_lower_num": "下卦數",
+        "xinyi_upper_strokes": "上（左）筆劃數",
+        "xinyi_lower_strokes": "下（右）筆劃數",
+        "xinyi_object": "物象（八卦）",
+        "xinyi_direction_label": "方位",
+        "xinyi_hour": "時辰（0-23）",
+        "xinyi_date": "選擇日期",
+        "xinyi_hour_input": "時辰（0-23時）",
+        "xinyi_calculate": "起卦",
+        "xinyi_ben_gua": "本卦",
+        "xinyi_bian_gua": "變卦",
+        "xinyi_dong_yao": "動爻",
+        "xinyi_upper_gua": "上卦",
+        "xinyi_lower_gua": "下卦",
+        "xinyi_ti_gua": "體卦",
+        "xinyi_yong_gua": "用卦",
+        "xinyi_hu_gua": "互卦",
+        "xinyi_tiyong_wx": "體用五行",
+        "xinyi_result_title": "起卦結果",
     },
     "en": {
         "page_title": "KinWangJi — Huangji Jingshi Divination",
@@ -158,6 +195,34 @@ _TEXTS = {
         "classics_select_text": "Select text",
         "classics_select_section": "Select section",
         "classics_full_text": "Show full text",
+        "tab_xinyi": "🌸 Xinyi Fawei",
+        "xinyi_title": "🌸 Xinyi Fawei Divination",
+        "xinyi_desc": "Hexagram-raising methods from Yang Xiangjun's *Huangji Jingshi Xinyi Fawei* (Plum Blossom Numerology).",
+        "xinyi_method": "Method",
+        "xinyi_number": "Pre-Heaven Numbers",
+        "xinyi_datetime": "Date & Time",
+        "xinyi_direction": "Post-Heaven Direction",
+        "xinyi_character": "Character Strokes",
+        "xinyi_upper_num": "Upper number",
+        "xinyi_lower_num": "Lower number",
+        "xinyi_upper_strokes": "Upper/left strokes",
+        "xinyi_lower_strokes": "Lower/right strokes",
+        "xinyi_object": "Object (trigram)",
+        "xinyi_direction_label": "Direction",
+        "xinyi_hour": "Hour (0-23)",
+        "xinyi_date": "Select date",
+        "xinyi_hour_input": "Hour (0-23)",
+        "xinyi_calculate": "Cast hexagram",
+        "xinyi_ben_gua": "Original (本卦)",
+        "xinyi_bian_gua": "Changed (變卦)",
+        "xinyi_dong_yao": "Moving line",
+        "xinyi_upper_gua": "Upper trigram",
+        "xinyi_lower_gua": "Lower trigram",
+        "xinyi_ti_gua": "Body (體卦)",
+        "xinyi_yong_gua": "Use (用卦)",
+        "xinyi_hu_gua": "Interlocking (互卦)",
+        "xinyi_tiyong_wx": "Five-Element relation",
+        "xinyi_result_title": "Divination Result",
     },
 }
 
@@ -326,8 +391,8 @@ except Exception:
 # Tabs
 # ---------------------------------------------------------------------------
 
-tab_pan, tab_history, tab_classics, tab_detail, tab_links = st.tabs(
-    [_t("tab_pan"), _t("tab_history"), _t("tab_classics"), _t("tab_detail"), _t("tab_links")]
+tab_pan, tab_xinyi, tab_history, tab_classics, tab_detail, tab_links = st.tabs(
+    [_t("tab_pan"), _t("tab_xinyi"), _t("tab_history"), _t("tab_classics"), _t("tab_detail"), _t("tab_links")]
 )
 
 # ---- Tab 1: Visual Board -------------------------------------------------
@@ -421,7 +486,123 @@ with tab_pan:
                     unsafe_allow_html=True,
                 )
 
-# ---- Tab 2: Random Historical Year Hexagram --------------------------------
+# ---- Tab 2: Xinyi Fawei 心易發微起盤 ----------------------------------------
+with tab_xinyi:
+    st.header(_t("xinyi_title"))
+    st.caption(_t("xinyi_desc"))
+
+    method_options = {
+        _t("xinyi_number"): "number",
+        _t("xinyi_datetime"): "datetime",
+        _t("xinyi_direction"): "direction",
+        _t("xinyi_character"): "character",
+    }
+    selected_method_label = st.selectbox(
+        _t("xinyi_method"),
+        options=list(method_options.keys()),
+    )
+    selected_method = method_options[selected_method_label]
+
+    xinyi_result = None
+
+    if selected_method == "number":
+        nc1, nc2 = st.columns(2)
+        with nc1:
+            xy_upper = st.number_input(_t("xinyi_upper_num"), min_value=1, value=5, step=1)
+        with nc2:
+            xy_lower = st.number_input(_t("xinyi_lower_num"), min_value=1, value=10, step=1)
+        if st.button(_t("xinyi_calculate"), key="xinyi_btn"):
+            xinyi_result = number_qigua(int(xy_upper), int(xy_lower))
+
+    elif selected_method == "datetime":
+        dc1, dc2 = st.columns(2)
+        with dc1:
+            xy_date = st.date_input(
+                _t("xinyi_date"),
+                now_shanghai.date(),
+                min_value=datetime.date(1900, 1, 1),
+                max_value=datetime.date(2100, 12, 31),
+                key="xinyi_date_input",
+            )
+        with dc2:
+            xy_hour = st.number_input(
+                _t("xinyi_hour_input"),
+                min_value=0, max_value=23,
+                value=now_shanghai.hour, step=1,
+                key="xinyi_hour_input",
+            )
+        if st.button(_t("xinyi_calculate"), key="xinyi_btn"):
+            xinyi_result = datetime_qigua(
+                xy_date.year, xy_date.month, xy_date.day, int(xy_hour),
+            )
+
+    elif selected_method == "direction":
+        dc1, dc2, dc3 = st.columns(3)
+        trigram_names = list(TRIGRAM_CODE.keys())
+        direction_names = list(DIRECTION_GUA.keys())
+        with dc1:
+            xy_obj = st.selectbox(_t("xinyi_object"), options=trigram_names)
+        with dc2:
+            xy_dir = st.selectbox(_t("xinyi_direction_label"), options=direction_names)
+        with dc3:
+            xy_hr = st.number_input(
+                _t("xinyi_hour"),
+                min_value=0, max_value=23,
+                value=now_shanghai.hour, step=1,
+                key="xinyi_dir_hour",
+            )
+        if st.button(_t("xinyi_calculate"), key="xinyi_btn"):
+            xinyi_result = direction_qigua(xy_obj, xy_dir, int(xy_hr))
+
+    elif selected_method == "character":
+        cc1, cc2 = st.columns(2)
+        with cc1:
+            xy_us = st.number_input(_t("xinyi_upper_strokes"), min_value=1, value=5, step=1)
+        with cc2:
+            xy_ls = st.number_input(_t("xinyi_lower_strokes"), min_value=1, value=8, step=1)
+        if st.button(_t("xinyi_calculate"), key="xinyi_btn"):
+            xinyi_result = character_qigua(int(xy_us), int(xy_ls))
+
+    # Display result
+    if xinyi_result:
+        st.divider()
+        st.subheader(_t("xinyi_result_title"))
+
+        # Main hexagrams row
+        r1, r2, r3 = st.columns(3)
+        with r1:
+            ben = xinyi_result["本卦"]
+            st.markdown(
+                _hexagram_card(_gua_symbol(ben), one2two(ben), _t("xinyi_ben_gua")),
+                unsafe_allow_html=True,
+            )
+        with r2:
+            bian = xinyi_result["變卦"]
+            st.markdown(
+                _hexagram_card(_gua_symbol(bian), one2two(bian), _t("xinyi_bian_gua")),
+                unsafe_allow_html=True,
+            )
+        with r3:
+            hu = xinyi_result["互卦"]
+            st.markdown(
+                _hexagram_card(_gua_symbol(hu), one2two(hu), _t("xinyi_hu_gua")),
+                unsafe_allow_html=True,
+            )
+
+        st.divider()
+
+        # Detail metrics
+        d1, d2, d3, d4 = st.columns(4)
+        with d1:
+            st.metric(_t("xinyi_dong_yao"), f"第 {xinyi_result['動爻']} 爻")
+        with d2:
+            st.metric(_t("xinyi_ti_gua"), xinyi_result["體卦"])
+        with d3:
+            st.metric(_t("xinyi_yong_gua"), xinyi_result["用卦"])
+        with d4:
+            st.metric(_t("xinyi_tiyong_wx"), xinyi_result["體用五行"])
+
+# ---- Tab 3: Random Historical Year Hexagram --------------------------------
 with tab_history:
     st.header(_t("history_title"))
     st.caption(_t("history_desc"))
@@ -471,7 +652,7 @@ with tab_history:
     else:
         st.info(_t("history_no_data"))
 
-# ---- Tab 3: Classical Texts -----------------------------------------------
+# ---- Tab 4: Classical Texts -----------------------------------------------
 with tab_classics:
     st.header(_t("classics_title"))
     st.caption(_t("classics_desc"))
@@ -509,12 +690,12 @@ with tab_classics:
         full_text = load_classic(selected_key)
         st.markdown(full_text)
 
-# ---- Tab 4: Full text board -----------------------------------------------
+# ---- Tab 5: Full text board -----------------------------------------------
 with tab_detail:
     st.subheader(_t("full_board"))
     st.code(pan_text, language=None)
 
-# ---- Tab 5: Links ---------------------------------------------------------
+# ---- Tab 6: Links ---------------------------------------------------------
 with tab_links:
     st.header(_t("links_header"))
     content = _fetch_remote_md(
