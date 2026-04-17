@@ -22,6 +22,8 @@ from .jieqi import (
 
 from .history import load_history, history_for_year
 
+from .classics import list_classics, load_classic, get_sections
+
 __all__ = [
     "wanji_four_gua",
     "display_pan",
@@ -34,4 +36,7 @@ __all__ = [
     "get_next_jieqi_start_date",
     "load_history",
     "history_for_year",
+    "list_classics",
+    "load_classic",
+    "get_sections",
 ]

@@ -10,6 +10,7 @@ import pytz
 from kinwangji.wanji import display_pan, wanji_four_gua, one2two
 from kinwangji.jieqi import jq, gong_wangzhuai
 from kinwangji.history import history_for_year
+from kinwangji.classics import list_classics, load_classic, get_sections
 
 # ---------------------------------------------------------------------------
 # Translations
@@ -80,6 +81,12 @@ _TEXTS = {
         "history_era": "年號",
         "history_refresh": "🔄 再抽一年",
         "history_no_data": "該年暫無歷史資料。",
+        "tab_classics": "📖 經典原文",
+        "classics_title": "📖 經典原文",
+        "classics_desc": "收錄三部皇極經世相關經典原文，可按卷瀏覽。",
+        "classics_select_text": "選擇經典",
+        "classics_select_section": "選擇章節",
+        "classics_full_text": "顯示完整原文",
     },
     "en": {
         "page_title": "KinWangJi — Huangji Jingshi Divination",
@@ -145,6 +152,12 @@ _TEXTS = {
         "history_era": "Era",
         "history_refresh": "🔄 Draw Again",
         "history_no_data": "No historical data available for this year.",
+        "tab_classics": "📖 Classics",
+        "classics_title": "📖 Classical Texts",
+        "classics_desc": "Browse three classical texts related to Huangji Jingshi.",
+        "classics_select_text": "Select text",
+        "classics_select_section": "Select section",
+        "classics_full_text": "Show full text",
     },
 }
 
@@ -309,8 +322,8 @@ except ValueError:
 # Tabs
 # ---------------------------------------------------------------------------
 
-tab_pan, tab_history, tab_detail, tab_links = st.tabs(
-    [_t("tab_pan"), _t("tab_history"), _t("tab_detail"), _t("tab_links")]
+tab_pan, tab_history, tab_classics, tab_detail, tab_links = st.tabs(
+    [_t("tab_pan"), _t("tab_history"), _t("tab_classics"), _t("tab_detail"), _t("tab_links")]
 )
 
 # ---- Tab 1: Visual Board -------------------------------------------------
@@ -454,12 +467,50 @@ with tab_history:
     else:
         st.info(_t("history_no_data"))
 
-# ---- Tab 3: Full text board -----------------------------------------------
+# ---- Tab 3: Classical Texts -----------------------------------------------
+with tab_classics:
+    st.header(_t("classics_title"))
+    st.caption(_t("classics_desc"))
+
+    classics_meta = list_classics()
+    classic_options = {c["title"]: c["key"] for c in classics_meta}
+    selected_title = st.selectbox(
+        _t("classics_select_text"),
+        options=list(classic_options.keys()),
+    )
+    selected_key = classic_options[selected_title]
+
+    # Show author & description
+    meta = next(c for c in classics_meta if c["key"] == selected_key)
+    st.markdown(f"**{meta['author']}**　—　{meta['description']}")
+
+    st.divider()
+
+    sections = get_sections(selected_key)
+    if sections:
+        section_titles = [s["title"] for s in sections]
+        selected_section = st.selectbox(
+            _t("classics_select_section"),
+            options=section_titles,
+        )
+        idx = section_titles.index(selected_section)
+        sec = sections[idx]
+        st.subheader(sec["title"])
+        if sec["content"]:
+            st.markdown(sec["content"])
+        else:
+            st.info("（本節無正文內容）")
+
+    with st.expander(_t("classics_full_text"), expanded=False):
+        full_text = load_classic(selected_key)
+        st.markdown(full_text)
+
+# ---- Tab 4: Full text board -----------------------------------------------
 with tab_detail:
     st.subheader(_t("full_board"))
     st.code(pan_text, language=None)
 
-# ---- Tab 4: Links ---------------------------------------------------------
+# ---- Tab 5: Links ---------------------------------------------------------
 with tab_links:
     st.header(_t("links_header"))
     content = _fetch_remote_md(
